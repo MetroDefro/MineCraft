@@ -59,6 +59,7 @@
     <Compile Include="Assets\Scripts\VoxelData.cs" />
     <Compile Include="Assets\Scripts\Chunk.cs" />
     <Compile Include="Assets\Scripts\World.cs" />
+    <Compile Include="Assets\Scripts\Noise.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
