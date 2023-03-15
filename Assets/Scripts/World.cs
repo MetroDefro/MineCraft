@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class World : MonoBehaviour
 {
+    public int Seed;
+
     public Transform player;
     public Vector3 spawnPosition;
 
@@ -19,6 +21,8 @@ public class World : MonoBehaviour
 
     private void Start()
     {
+        Random.InitState(Seed);
+
         spawnPosition = new Vector3((VoxelData.WorldSizeInChunks * VoxelData.ChunkWidth) / 2f, VoxelData.ChunkHeight + 2f, (VoxelData.WorldSizeInChunks * VoxelData.ChunkWidth) / 2f);
         GenerateWorld();
         playerLastChunkCoord = GetChunkCoordFromVector3(player.position);
@@ -89,14 +93,29 @@ public class World : MonoBehaviour
 
     public byte GetVoxel (Vector3 pos)
     {
+        int yPos = (Mathf.FloorToInt(pos.y));
+
+        // IMMUTABLE PASS
+        
+        // If outside world, return air
         if (!IsVoxelInWorld(pos))
             return 0;
-        if (pos.y < 1)
+
+        // if bottom block of chunk, return bedrock.
+        if (yPos == 0)
             return 1;
-        else if (pos.y == VoxelData.ChunkHeight - 1)
+
+        // BASIC TERRAIN PASS
+
+        int terrainHeight = Mathf.FloorToInt(VoxelData.ChunkHeight * Noise.Get2DPerlin(new Vector2(pos.x, pos.z), 500, 0.25f));
+
+        if (yPos == terrainHeight)
             return 3;
+        else if (yPos > terrainHeight)
+            return 0;
         else
             return 2;
+
     }
 
     private void CreateChunk(ChunkCoord coord) 

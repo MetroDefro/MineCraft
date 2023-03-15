@@ -428,6 +428,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c79ac4991ec89b044b339f24d9268a64, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Seed: 2147483647
   player: {fileID: 963194228}
   spawnPosition: {x: 0, y: 0, z: 0}
   material: {fileID: 2100000, guid: 428f69a984cb5cb4bab88613731646d7, type: 2}
@@ -464,3 +465,11 @@ MonoBehaviour:
     bottomFaceTexture: 52
     leftFaceTexture: 43
     rightFaceTexture: 43
+  - blockName: Sand
+    isSolid: 1
+    backFaceTexture: 57
+    frontFaceTexture: 57
+    topFaceTexture: 57
+    bottomFaceTexture: 57
+    leftFaceTexture: 57
+    rightFaceTexture: 57
