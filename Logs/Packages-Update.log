@@ -44,3 +44,11 @@ The following packages were added:
 The following packages were updated:
   com.unity.collab-proxy from version 1.13.5 to 1.17.1
   com.unity.timeline from version 1.6.2 to 1.6.4
+
+=== Thu Mar 16 16:17:15 2023
+
+Packages were changed.
+Update Mode: resetToDefaultDependencies
+
+The following packages were removed:
+  com.unity.feature.development@1.0.1

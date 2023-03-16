@@ -10,12 +10,14 @@ public class Chunk
     private MeshRenderer meshRenderer;
     private MeshFilter meshFilter;
 
+    private MeshCollider meshCollider;
+
     private int vertexIndex = 0;
     private List<Vector3> vertices = new List<Vector3>();
     private List<int> triangles = new List<int>();
     private List<Vector2> uvs = new List<Vector2>();
 
-    private byte[,,] voxelMap = new byte[VoxelData.ChunkWidth, VoxelData.ChunkHeight, VoxelData.ChunkWidth];
+    public byte[,,] voxelMap = new byte[VoxelData.ChunkWidth, VoxelData.ChunkHeight, VoxelData.ChunkWidth];
 
     private World world;
 
@@ -38,6 +40,8 @@ public class Chunk
         meshRenderer = chunkObject.AddComponent<MeshRenderer>();
         meshFilter = chunkObject.AddComponent<MeshFilter>();
 
+        meshCollider = chunkObject.AddComponent<MeshCollider>();
+
         meshRenderer.material = world.material;
         chunkObject.transform.SetParent(world.transform);
         chunkObject.transform.position = new Vector3(coord.x * VoxelData.ChunkWidth, 0f, coord.z * VoxelData.ChunkWidth);
@@ -46,6 +50,8 @@ public class Chunk
         PopulateVoxelMap();
         CreateChunkMesh();
         CreateMesh();
+
+        meshCollider.sharedMesh = meshFilter.mesh;
     }
 
     private void CreateChunkMesh()
