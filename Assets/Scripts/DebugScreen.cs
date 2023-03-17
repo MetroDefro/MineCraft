@@ -28,9 +28,9 @@ public class DebugScreen : MonoBehaviour
         debugText += "\n";
         debugText += frameRate + "fps";
         debugText += "\n\n";
-        debugText += "XYZ: " + (Mathf.FloorToInt(world.player.position.x) - halfWorldSizeInVoxels) + " / " + Mathf.FloorToInt(world.player.position.y) + " / " + (Mathf.FloorToInt(world.player.position.z) - halfWorldSizeInVoxels);
+        debugText += "XYZ: " + (Mathf.FloorToInt(world.PlayerTransform.position.x) - halfWorldSizeInVoxels) + " / " + Mathf.FloorToInt(world.PlayerTransform.position.y) + " / " + (Mathf.FloorToInt(world.PlayerTransform.position.z) - halfWorldSizeInVoxels);
         debugText += "\n";
-        debugText += "Chunk: " + (world.playerChunkCoord.x - halfWorldSizeInChunks) + " / " + (world.playerChunkCoord.z - halfWorldSizeInChunks);
+        debugText += "Chunk: " + (world.PlayerChunkCoord.x - halfWorldSizeInChunks) + " / " + (world.PlayerChunkCoord.z - halfWorldSizeInChunks);
 
         text.text = debugText;
 

@@ -4,36 +4,30 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    public bool isGrounded;
-    public bool isSprinting;
+    [SerializeField] private Transform camera;
+    [SerializeField] private World world;
 
-    private Transform cam;
-    private World world;
+    [SerializeField] private bool isGrounded;
+    [SerializeField] private bool isSprinting;
 
-    public float walkSpeed = 3f;
-    public float sprintSpeed = 6f;
-    public float jumpForce = 5f;
-    public float gravity = -9.8f;
-
-    public float playerWidth = 0.15f;
-    public float boundsTolerance = 0.1f;
+    [SerializeField] private float walkSpeed = 3f;
+    [SerializeField] private float sprintSpeed = 6f;
+    [SerializeField] private float jumpForce = 5f;
+    [SerializeField] private float gravity = -9.8f;
+    [SerializeField] private float playerWidth = 0.15f;
+    [SerializeField] private float boundsTolerance = 0.1f;
 
     private float horizontal;
     private float vertical;
     private float mouseHorizontal;
-    private float mouseVertical;
-    private Vector3 velocity;
+    private float mouseVertical; 
     private float verticalMomentum;
+    private Vector3 velocity;
     private bool jumpRequest;
 
     private void Awake()
     {
-        Application.targetFrameRate = 30;
-    }
-    private void Start()
-    {
-        cam = Camera.main.transform;
-        world = GameObject.FindObjectOfType<World>();
+        Application.targetFrameRate = 60;
     }
 
     private void FixedUpdate()
@@ -43,7 +37,7 @@ public class Player : MonoBehaviour
             Jump();
 
         transform.Rotate(Vector3.up * mouseHorizontal);
-        cam.Rotate(Vector3.right * -mouseVertical);
+        camera.Rotate(Vector3.right * -mouseVertical);
         transform.Translate(velocity, Space.World);
 
     }
@@ -97,8 +91,7 @@ public class Player : MonoBehaviour
             isSprinting = true;
         if (Input.GetKeyUp(KeyCode.LeftShift))
             isSprinting = false;
-
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (isGrounded && Input.GetKeyDown(KeyCode.Space))
             jumpRequest = true;
     }
 
@@ -125,48 +118,20 @@ public class Player : MonoBehaviour
             world.CheckForVoxel(new Vector3(transform.position.x + playerWidth, transform.position.y + 2f + upSpeed, transform.position.z - playerWidth)) ||
             world.CheckForVoxel(new Vector3(transform.position.x + playerWidth, transform.position.y + 2f + upSpeed, transform.position.z + playerWidth)) ||
             world.CheckForVoxel(new Vector3(transform.position.x - playerWidth, transform.position.y + 2f + upSpeed, transform.position.z + playerWidth)))
-        {
             return 0;
-        }
         else
-        {
             return upSpeed;
-        }
     }
 
-    public bool front
-    {
-        get
-        {
-            return world.CheckForVoxel(new Vector3(transform.position.x, transform.position.y, transform.position.z + playerWidth)) ||
-                world.CheckForVoxel(new Vector3(transform.position.x, transform.position.y + 1f, transform.position.z + playerWidth));
-        }
-    }
+    public bool front { get => world.CheckForVoxel(new Vector3(transform.position.x, transform.position.y, transform.position.z + playerWidth)) ||
+                world.CheckForVoxel(new Vector3(transform.position.x, transform.position.y + 1f, transform.position.z + playerWidth)); }
 
-    public bool back
-    {
-        get
-        {
-            return world.CheckForVoxel(new Vector3(transform.position.x, transform.position.y, transform.position.z - playerWidth)) ||
-                world.CheckForVoxel(new Vector3(transform.position.x, transform.position.y + 1f, transform.position.z - playerWidth));
-        }
-    }
+    public bool back { get => world.CheckForVoxel(new Vector3(transform.position.x, transform.position.y, transform.position.z - playerWidth)) ||
+                world.CheckForVoxel(new Vector3(transform.position.x, transform.position.y + 1f, transform.position.z - playerWidth)); }
 
-    public bool left
-    {
-        get
-        {
-            return world.CheckForVoxel(new Vector3(transform.position.x - playerWidth, transform.position.y, transform.position.z)) ||
-                world.CheckForVoxel(new Vector3(transform.position.x - playerWidth, transform.position.y + 1f, transform.position.z));
-        }
-    }
+    public bool left { get => world.CheckForVoxel(new Vector3(transform.position.x - playerWidth, transform.position.y, transform.position.z)) ||
+                world.CheckForVoxel(new Vector3(transform.position.x - playerWidth, transform.position.y + 1f, transform.position.z)); }
 
-    public bool right
-    {
-        get
-        {
-            return world.CheckForVoxel(new Vector3(transform.position.x + playerWidth, transform.position.y, transform.position.z)) ||
-                world.CheckForVoxel(new Vector3(transform.position.x + playerWidth, transform.position.y + 1f, transform.position.z));
-        }
-    }
+    public bool right { get => world.CheckForVoxel(new Vector3(transform.position.x + playerWidth, transform.position.y, transform.position.z)) ||
+                world.CheckForVoxel(new Vector3(transform.position.x + playerWidth, transform.position.y + 1f, transform.position.z)); }
 }
