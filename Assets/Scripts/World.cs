@@ -13,13 +13,14 @@ public class World : MonoBehaviour
     public Material material;
     public BlockType[] blockTypes;
 
-    private ChunkCoord playerChunkCoord;
+    public GameObject DebugScreen;
+
+    public ChunkCoord playerChunkCoord;
     private ChunkCoord playerLastChunkCoord;
 
     private Chunk[,] chunks = new Chunk[VoxelData.WorldSizeInChunks, VoxelData.WorldSizeInChunks];
     private List<ChunkCoord> currentActiveChunks = new List<ChunkCoord>();
     private List<ChunkCoord> chunksToCreate = new List<ChunkCoord>();
-
     private bool isCreatingChunks;
 
     private void Start()
@@ -38,13 +39,19 @@ public class World : MonoBehaviour
 
         if (!playerChunkCoord.Equals(playerLastChunkCoord))
             CheckViewDistance();
+
+        if (chunksToCreate.Count > 0 && !isCreatingChunks)
+            StartCoroutine(CreateChunks());
+
+        if (Input.GetKeyDown(KeyCode.F3))
+            DebugScreen.SetActive(!DebugScreen.activeSelf);
     }
 
     public bool CheckForVoxel(Vector3 pos)
     {
         ChunkCoord thisChunkCoord = new ChunkCoord(pos);
 
-        if (IsVoxelInWorld(pos))
+        if (!IsChunkInWorld(thisChunkCoord) || pos.y < 0 || pos.y > VoxelData.ChunkHeight)
             return false;
 
         if (chunks[thisChunkCoord.x, thisChunkCoord.z] != null && chunks[thisChunkCoord.x, thisChunkCoord.z].isVoxelMapPopulated)

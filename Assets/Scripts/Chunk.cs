@@ -98,7 +98,7 @@ public class Chunk
         int z = Mathf.FloorToInt(pos.z);
 
         if (!IsVoxelInChunk(x, y, z))
-            return world.CheckForVoxel(pos);
+            return world.CheckForVoxel(pos + position);
 
         return world.blockTypes[VoxelMap[x, y, z]].isSolid;
     }
