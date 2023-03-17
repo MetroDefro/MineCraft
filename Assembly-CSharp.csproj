@@ -58,12 +58,12 @@
   <ItemGroup>
     <Compile Include="Assets\Scripts\Noise.cs" />
     <Compile Include="Assets\Scripts\DebugScreen.cs" />
+    <Compile Include="Assets\Scripts\BlockType.cs" />
     <Compile Include="Assets\Scripts\BiomeAttributes.cs" />
     <Compile Include="Assets\Scripts\VoxelData.cs" />
     <Compile Include="Assets\Scripts\Chunk.cs" />
     <Compile Include="Assets\Scripts\World.cs" />
     <Compile Include="Assets\Scripts\Player.cs" />
-    <Compile Include="Assets\Scripts\BlockType.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />

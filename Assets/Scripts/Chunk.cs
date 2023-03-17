@@ -56,8 +56,7 @@ public class Chunk
         chunkObject.name = "Chunk " + Coord.x + ", " + Coord.z;
 
         PopulateVoxelMap();
-        CreateChunkMesh();
-        CreateMesh();
+        UpdateChunkMesh();
     }
 
     public byte GetVoxelFromGlobalVector3(Vector3 pos)
@@ -90,8 +89,10 @@ public class Chunk
         isVoxelMapPopulated = true;
     }
 
-    private void CreateChunkMesh()
+    private void UpdateChunkMesh()
     {
+        ClearMeshData();
+
         for (int y = 0; y < VoxelData.ChunkHeight; y++)
         {
             for (int x = 0; x < VoxelData.ChunkWidth; x++)
@@ -99,13 +100,23 @@ public class Chunk
                 for (int z = 0; z < VoxelData.ChunkWidth; z++)
                 {
                     if (world.BlockTypes[VoxelMap[x, y, z]].isSolid)
-                        AddVoxelDataToChunk(new Vector3(x, y, z));
+                        UpdateMeshData(new Vector3(x, y, z));
                 }
             }
         }
+
+        CreateMesh();
     }
 
-    private void AddVoxelDataToChunk(Vector3 pos)
+    private void ClearMeshData()
+    {
+        vertexIndex = 0;
+        vertices.Clear();
+        triangles.Clear();
+        uvs.Clear();
+    }
+
+    private void UpdateMeshData(Vector3 pos)
     {
         for (int p = 0; p < 6; p++)
         {
@@ -143,6 +154,37 @@ public class Chunk
     }
 
     private bool IsVoxelInChunk(int x, int y, int z) => x > 0 && x < VoxelData.ChunkWidth -1 && y > 0 && y < VoxelData.ChunkHeight - 1 && z > 0 && z < VoxelData.ChunkWidth - 1;
+
+    public void EditVoxel (Vector3 pos, byte newID)
+    {
+        int xCheck = Mathf.FloorToInt(pos.x);
+        int yCheck = Mathf.FloorToInt(pos.y);
+        int zCheck = Mathf.FloorToInt(pos.z);
+
+        xCheck -= Mathf.FloorToInt(chunkObject.transform.position.x);
+        zCheck -= Mathf.FloorToInt(chunkObject.transform.position.z);
+
+        VoxelMap[xCheck, yCheck, zCheck] = newID;
+
+        UpdateSurroundingVoxels(xCheck, yCheck, zCheck);
+
+        UpdateChunkMesh();
+    }
+
+    private void UpdateSurroundingVoxels(int x, int y, int z)
+    {
+        Vector3 thisVoxel = new Vector3(x, y, z);
+
+        for (int p = 0; p < 6; p++)
+        {
+            Vector3 currentVoxel = thisVoxel + VoxelData.FaceChecks[p];
+
+            if(!IsVoxelInChunk((int)currentVoxel.x, (int)currentVoxel.y, (int)currentVoxel.z))
+            {
+                world.GetChunkFromVector3(currentVoxel + position).UpdateChunkMesh();
+            }
+        }
+    }
 
     private bool CheckVoxel(Vector3 pos)
     {
