@@ -14,9 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   blockName: Dirt
   isSolid: 1
-  backFaceTexture: 52
-  frontFaceTexture: 52
-  topFaceTexture: 52
-  bottomFaceTexture: 52
-  leftFaceTexture: 52
-  rightFaceTexture: 52
+  icon: {fileID: -729517698, guid: e8041fdfe6e48e8419bffd6dc579ad79, type: 3}
+  backFaceTexture: 1
+  frontFaceTexture: 1
+  topFaceTexture: 1
+  bottomFaceTexture: 1
+  leftFaceTexture: 1
+  rightFaceTexture: 1

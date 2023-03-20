@@ -12,6 +12,7 @@ public class Player : MonoBehaviour
 
     [SerializeField] private float walkSpeed = 3f;
     [SerializeField] private float sprintSpeed = 6f;
+    [SerializeField] private float rotateSpeed = 60f;
     [SerializeField] private float jumpForce = 5f;
     [SerializeField] private float gravity = -9.8f;
     [SerializeField] private float playerWidth = 0.15f;
@@ -30,7 +31,6 @@ public class Player : MonoBehaviour
     public float checkIncrement = 0.1f;
     public float reach = 8f;
 
-    public TMPro.TextMeshProUGUI selectedBlockText;
     public byte selectedBlockIndex = 1;
 
     private void Awake()
@@ -41,7 +41,6 @@ public class Player : MonoBehaviour
     private void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
-        selectedBlockText.text = world.BlockTypes[selectedBlockIndex].blockName + " block selected";
     }
 
     private void FixedUpdate()
@@ -50,8 +49,8 @@ public class Player : MonoBehaviour
         if (jumpRequest)
             Jump();
 
-        transform.Rotate(Vector3.up * mouseHorizontal);
-        camera.Rotate(Vector3.right * -mouseVertical);
+        transform.Rotate(Vector3.up * mouseHorizontal * rotateSpeed * Time.fixedDeltaTime);
+        camera.Rotate(Vector3.right * -mouseVertical * rotateSpeed * Time.fixedDeltaTime);
         transform.Translate(velocity, Space.World);
 
     }
@@ -110,21 +109,6 @@ public class Player : MonoBehaviour
             jumpRequest = true;
 
         float scroll = Input.GetAxis("Mouse ScrollWheel");
-
-        if(scroll != 0)
-        {
-            if (scroll > 0)
-                selectedBlockIndex++;
-            else
-                selectedBlockIndex--;
-
-            if (selectedBlockIndex > (byte)(world.BlockTypes.Length - 1))
-                selectedBlockIndex = 1;
-            if (selectedBlockIndex < 1)
-                selectedBlockIndex = (byte)(world.BlockTypes.Length - 1);
-
-            selectedBlockText.text = world.BlockTypes[selectedBlockIndex].blockName + " block names";
-        }
 
         if (highlightBlock.gameObject.activeSelf)
         {

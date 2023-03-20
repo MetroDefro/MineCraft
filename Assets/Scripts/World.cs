@@ -172,8 +172,7 @@ public class World : MonoBehaviour
                     currentActiveChunks.Add(coord);
                 }
 
-                int Count = previouslyActiveChunks.Count;
-                for (int i = 0; i < Count; i++)
+                for (int i = 0; i < previouslyActiveChunks.Count; i++)
                 {
                     if (previouslyActiveChunks[i].Equals(coord))
                         previouslyActiveChunks.RemoveAt(i);

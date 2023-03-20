@@ -14,9 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   blockName: Soil
   isSolid: 1
-  backFaceTexture: 43
-  frontFaceTexture: 43
-  topFaceTexture: 15
-  bottomFaceTexture: 52
-  leftFaceTexture: 43
-  rightFaceTexture: 43
+  icon: {fileID: -1403258485, guid: e8041fdfe6e48e8419bffd6dc579ad79, type: 3}
+  backFaceTexture: 2
+  frontFaceTexture: 2
+  topFaceTexture: 7
+  bottomFaceTexture: 1
+  leftFaceTexture: 2
+  rightFaceTexture: 2

@@ -14,9 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   blockName: Stone
   isSolid: 1
-  backFaceTexture: 39
-  frontFaceTexture: 39
-  topFaceTexture: 39
-  bottomFaceTexture: 39
-  leftFaceTexture: 39
-  rightFaceTexture: 39
+  icon: {fileID: 1166673458, guid: e8041fdfe6e48e8419bffd6dc579ad79, type: 3}
+  backFaceTexture: 0
+  frontFaceTexture: 0
+  topFaceTexture: 0
+  bottomFaceTexture: 0
+  leftFaceTexture: 0
+  rightFaceTexture: 0

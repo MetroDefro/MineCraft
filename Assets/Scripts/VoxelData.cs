@@ -12,8 +12,8 @@ public class VoxelData : MonoBehaviour
 
     public static readonly int ViewDistanceInChunks = 5;
 
-    public static readonly int TextureAtlassWidth = 9;
-    public static readonly int TextureAtlassHeight = 10;
+    public static readonly int TextureAtlassWidth = 4;
+    public static readonly int TextureAtlassHeight = 4;
 
     public static float NormalizedTextureAtlassWidth { get => 1f / (float) TextureAtlassWidth; }    
     public static float NormalizedTextureAtlassHeight { get => 1f / (float)TextureAtlassHeight; }
