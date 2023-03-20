@@ -225,7 +225,7 @@ MonoBehaviour:
   player: {fileID: 823385539}
   highlight: {fileID: 190427386}
   itemSlots:
-  - itemID: 1
+  - itemID: 10
     icon: {fileID: 2070109266}
   - itemID: 2
     icon: {fileID: 1337380113}
@@ -1990,6 +1990,7 @@ MonoBehaviour:
   Seed: 2147483647
   biome: {fileID: 11400000, guid: 0ce1a7b9063ad694a9dace01c5ec6678, type: 2}
   material: {fileID: 2100000, guid: 428f69a984cb5cb4bab88613731646d7, type: 2}
+  transparentMaterial: {fileID: 2100000, guid: 34c971042e2aa1f438745870db4150ca, type: 2}
   DebugScreen: {fileID: 166241808}
   blockTypes:
   - {fileID: 11400000, guid: b97a462293e0df14db37f7e9e09959a5, type: 2}
@@ -2002,6 +2003,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: db0d2bcdcc9283848bab7341d8cda436, type: 2}
   - {fileID: 11400000, guid: e68fa3bc5d024bc44b47cbdee0d80265, type: 2}
   - {fileID: 11400000, guid: 2883edfaadf6aae4da95bd8d13a658aa, type: 2}
+  - {fileID: 11400000, guid: c6a60961f2c857d45a4202ef4f72940d, type: 2}
 --- !u!1001 &1337380111
 PrefabInstance:
   m_ObjectHideFlags: 0

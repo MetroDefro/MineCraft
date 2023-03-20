@@ -7,6 +7,7 @@ public class BlockType : ScriptableObject
 {
     public string blockName;
     public bool isSolid;
+    public bool isTransparent;
     public Sprite icon;
 
     [Header("Texture Values")]

@@ -15,6 +15,7 @@ public class Chunk
     private byte[,,] VoxelMap = new byte[VoxelData.ChunkWidth, VoxelData.ChunkHeight, VoxelData.ChunkWidth];
     private List<Vector3> vertices = new List<Vector3>();
     private List<int> triangles = new List<int>();
+    private List<int> transparentTriangles = new List<int>();
     private List<Vector2> uvs = new List<Vector2>();
 
     private World world;
@@ -34,23 +35,23 @@ public class Chunk
 
     public Vector3 position { get => chunkObject.transform.position; }
 
-    public Chunk(ChunkCoord coord, World world, Material material, bool generateOnLoad)
+    public Chunk(ChunkCoord coord, World world, Material material, Material transparentMaterial, bool generateOnLoad)
     {
         this.Coord = coord;
         this.world = world;
         isActive = true;
 
         if(generateOnLoad)
-            Init(material);
+            Init(material, transparentMaterial);
     }
 
-    public void Init(Material material)
+    public void Init(Material material, Material transparentMaterial)
     {
         chunkObject = new GameObject();
         meshRenderer = chunkObject.AddComponent<MeshRenderer>();
         meshFilter = chunkObject.AddComponent<MeshFilter>();
 
-        meshRenderer.material = material;
+        meshRenderer.materials = new Material[] { material, transparentMaterial };
         chunkObject.transform.SetParent(world.transform);
         chunkObject.transform.position = new Vector3(Coord.x * VoxelData.ChunkWidth, 0f, Coord.z * VoxelData.ChunkWidth);
         chunkObject.name = "Chunk " + Coord.x + ", " + Coord.z;
@@ -118,22 +119,36 @@ public class Chunk
 
     private void UpdateMeshData(Vector3 pos)
     {
+        byte blockID = VoxelMap[(int)pos.x, (int)pos.y, (int)pos.z];
+        bool isTransparent = world.BlockTypes[blockID].isTransparent;
+
         for (int p = 0; p < 6; p++)
         {
-            if (!CheckVoxel(pos + VoxelData.FaceChecks[p]))
+            if (CheckVoxel(pos + VoxelData.FaceChecks[p]))
             {
-                byte blockID = VoxelMap[(int)pos.x, (int)pos.y, (int)pos.z];
                 for (int i = 0; i < 4; i++)
                     vertices.Add(pos + VoxelData.VoxelVerts[VoxelData.VoxelTris[p, i]]);
 
                 AddTexture(world.BlockTypes[blockID].GetTextureID(p));
 
-                triangles.Add(vertexIndex);
-                triangles.Add(vertexIndex + 1);
-                triangles.Add(vertexIndex + 2);
-                triangles.Add(vertexIndex + 2);
-                triangles.Add(vertexIndex + 1);
-                triangles.Add(vertexIndex + 3);
+                if (!isTransparent)
+                {
+                    triangles.Add(vertexIndex);
+                    triangles.Add(vertexIndex + 1);
+                    triangles.Add(vertexIndex + 2);
+                    triangles.Add(vertexIndex + 2);
+                    triangles.Add(vertexIndex + 1);
+                    triangles.Add(vertexIndex + 3);
+                } else
+                {
+                    transparentTriangles.Add(vertexIndex);
+                    transparentTriangles.Add(vertexIndex + 1);
+                    transparentTriangles.Add(vertexIndex + 2);
+                    transparentTriangles.Add(vertexIndex + 2);
+                    transparentTriangles.Add(vertexIndex + 1);
+                    transparentTriangles.Add(vertexIndex + 3);
+                }
+
                 vertexIndex += 4;
             }
         }
@@ -141,12 +156,14 @@ public class Chunk
 
     private void CreateMesh()
     {
-        Mesh mesh = new Mesh
-        {
-            vertices = vertices.ToArray(),
-            triangles = triangles.ToArray(),
-            uv = uvs.ToArray()
-        };
+        Mesh mesh = new Mesh();
+        mesh.vertices = vertices.ToArray();
+
+        mesh.subMeshCount = 2;
+        mesh.SetTriangles(triangles.ToArray(), 0);
+        mesh.SetTriangles(transparentTriangles.ToArray(), 1);
+
+        mesh.uv = uvs.ToArray();
 
         mesh.RecalculateNormals();
 
@@ -194,9 +211,9 @@ public class Chunk
 
         // if voxel not in chunk
         if (!IsVoxelInChunk(x, y, z))
-            return world.CheckForVoxel(pos + position);
+            return world.CheckIfVoxelTransparent(pos + position);
 
-        return world.BlockTypes[VoxelMap[x, y, z]].isSolid;
+        return world.BlockTypes[VoxelMap[x, y, z]].isTransparent;
     }
 
     private void AddTexture(int textureID)

@@ -12,6 +12,7 @@ public class World : MonoBehaviour
     [SerializeField] private int Seed;
     [SerializeField] private BiomeAttributes biome;
     [SerializeField] private Material material;
+    [SerializeField] private Material transparentMaterial;
     [SerializeField] private GameObject DebugScreen;
     [SerializeField] private BlockType[] blockTypes;
 
@@ -60,6 +61,19 @@ public class World : MonoBehaviour
             return blockTypes[chunks[thisChunkCoord.x, thisChunkCoord.z].GetVoxelFromGlobalVector3(pos)].isSolid;
 
         return blockTypes[GetVoxel(pos)].isSolid;
+    }
+
+    public bool CheckIfVoxelTransparent(Vector3 pos)
+    {
+        ChunkCoord thisChunkCoord = new ChunkCoord(pos);
+
+        if (!IsChunkInWorld(thisChunkCoord) || pos.y < 0 || pos.y > VoxelData.ChunkHeight)
+            return false;
+
+        if (chunks[thisChunkCoord.x, thisChunkCoord.z] != null && chunks[thisChunkCoord.x, thisChunkCoord.z].isVoxelMapPopulated)
+            return blockTypes[chunks[thisChunkCoord.x, thisChunkCoord.z].GetVoxelFromGlobalVector3(pos)].isTransparent;
+
+        return blockTypes[GetVoxel(pos)].isTransparent;
     }
 
     public byte GetVoxel(Vector3 pos)
@@ -113,7 +127,7 @@ public class World : MonoBehaviour
             for(int z = chunkStartPosition; z < chunkEndPosition; z++)
             {
                 ChunkCoord coord = new ChunkCoord(x, z);
-                chunks[x, z] = new Chunk(coord, this, material, true);
+                chunks[x, z] = new Chunk(coord, this, material, transparentMaterial, true);
                 currentActiveChunks.Add(coord);
             }
         }
@@ -125,7 +139,7 @@ public class World : MonoBehaviour
 
         while(chunksToCreate.Count > 0)
         {
-            chunks[chunksToCreate[0].x, chunksToCreate[0].z].Init(material);
+            chunks[chunksToCreate[0].x, chunksToCreate[0].z].Init(material, transparentMaterial);
             chunksToCreate.RemoveAt(0);
             yield return null;
         }
@@ -162,7 +176,7 @@ public class World : MonoBehaviour
                 {
                     if (chunks[x, z] == null)
                     {
-                        chunks[x, z] = new Chunk(coord, this, material, false);
+                        chunks[x, z] = new Chunk(coord, this, material, transparentMaterial,false);
                         chunksToCreate.Add(coord);
                     }   
                     else if (!chunks[x, z].IsActive)
@@ -184,7 +198,7 @@ public class World : MonoBehaviour
             chunks[c.x, c.z].IsActive = false;
     }
 
-    private bool IsChunkInWorld(ChunkCoord coord) => coord.x >= 0 && coord.x < VoxelData.WorldSizeInChunks && coord.z >= 0 && coord.z < VoxelData.WorldSizeInChunks;
+    private bool IsChunkInWorld(ChunkCoord coord) => coord.x > 0 && coord.x < VoxelData.WorldSizeInChunks - 1 && coord.z > 0 && coord.z < VoxelData.WorldSizeInChunks - 1;
     // private bool IsVoxelInWorld(Vector3 pos) => pos.x >= 0 && pos.x < VoxelData.WorldSizeInVoxels && pos.y >= 0 && pos.y < VoxelData.ChunkHeight && pos.z >= 0 && pos.z < VoxelData.WorldSizeInVoxels;
     #endregion
 }
