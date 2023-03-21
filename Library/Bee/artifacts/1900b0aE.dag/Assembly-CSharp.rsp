@@ -356,6 +356,7 @@
 "Assets/Scripts/DebugScreen.cs"
 "Assets/Scripts/Noise.cs"
 "Assets/Scripts/Player.cs"
+"Assets/Scripts/Structure.cs"
 "Assets/Scripts/Toolbar.cs"
 "Assets/Scripts/VoxelData.cs"
 "Assets/Scripts/World.cs"

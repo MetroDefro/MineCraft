@@ -1,10 +1,11 @@
 using System.Collections.Generic;
 using UnityEngine;
+using System.Threading;
 
 public class Chunk
 {
-    public bool isVoxelMapPopulated = false;
     public Queue<VoxelMode> modifications = new Queue<VoxelMode>();
+    public Vector3 Position;
 
     private GameObject chunkObject;
     private MeshRenderer meshRenderer;
@@ -21,6 +22,8 @@ public class Chunk
     private World world;
 
     private bool isActive;
+    private bool isVoxelMapPopulated = false;
+    private bool threadLocked = false;
 
     public bool IsActive
     {
@@ -33,7 +36,7 @@ public class Chunk
         }
     }
 
-    public Vector3 position { get => chunkObject.transform.position; }
+    public bool IsEditable { get => isVoxelMapPopulated || threadLocked; }
 
     public Chunk(ChunkCoord coord, World world, Material material, Material transparentMaterial, bool generateOnLoad)
     {
@@ -56,7 +59,11 @@ public class Chunk
         chunkObject.transform.position = new Vector3(Coord.x * VoxelData.ChunkWidth, 0f, Coord.z * VoxelData.ChunkWidth);
         chunkObject.name = "Chunk " + Coord.x + ", " + Coord.z;
 
-        PopulateVoxelMap();
+        Thread PopulateThread = new Thread(new ThreadStart(PopulateVoxelMap));
+        PopulateThread.Start();
+
+        Position = chunkObject.transform.position;
+
         UpdateChunk();
     }
 
@@ -66,8 +73,8 @@ public class Chunk
         int yCheck = Mathf.FloorToInt(pos.y);
         int zCheck = Mathf.FloorToInt(pos.z);
 
-        xCheck -= Mathf.FloorToInt(chunkObject.transform.position.x);
-        zCheck -= Mathf.FloorToInt(chunkObject.transform.position.z);
+        xCheck -= Mathf.FloorToInt(Position.x);
+        zCheck -= Mathf.FloorToInt(Position.z);
 
         return voxelMapBlockTypes[xCheck, yCheck, zCheck];
     }
@@ -82,21 +89,30 @@ public class Chunk
                 for (int z = 0; z < VoxelData.ChunkWidth; z++)
                 {
                     // Get Block Type
-                    voxelMapBlockTypes[x, y, z] = world.GetVoxelBlockType(new Vector3(x, y, z) + position);
+                    voxelMapBlockTypes[x, y, z] = world.GetVoxelBlockType(new Vector3(x, y, z) + Position);
                 }
             }
         }
 
+        // UpdateChunk();
         isVoxelMapPopulated = true;
     }
 
-    public void UpdateChunk()
+    public void StartUpdateChunk()
     {
+        Thread updateThread = new Thread(new ThreadStart(UpdateChunk));
+        updateThread.Start();
+    }
+
+    private void UpdateChunk()
+    {
+        threadLocked = true;
+
         // If there is something to be modified, set up the voxel block type of the that's position as the id.
         while (modifications.Count > 0)
         {
             VoxelMode v = modifications.Dequeue();
-            Vector3 pos = v.position -= position;
+            Vector3 pos = v.position -= Position;
             voxelMapBlockTypes[(int)pos.x, (int)pos.y, (int)pos.z] = v.id;
         }
 
@@ -114,7 +130,12 @@ public class Chunk
             }
         }
 
-        CreateMesh();
+        lock (world.chunksToDraw)
+        {
+            world.chunksToDraw.Enqueue(this);
+        }
+        
+        threadLocked = false;
     }
 
     private void ClearMeshData()
@@ -164,7 +185,7 @@ public class Chunk
         }
     }
 
-    private void CreateMesh()
+    public void CreateMesh()
     {
         Mesh mesh = new Mesh();
         mesh.vertices = vertices.ToArray();
@@ -182,7 +203,7 @@ public class Chunk
 
     private bool IsVoxelInChunk(int x, int y, int z) => x >= 0 && x < VoxelData.ChunkWidth && y >= 0 && y < VoxelData.ChunkHeight && z >= 0 && z < VoxelData.ChunkWidth;
 
-    public void EditVoxel (Vector3 pos, byte newID)
+    public void EditVoxel(Vector3 pos, byte newID)
     {
         int xCheck = Mathf.FloorToInt(pos.x);
         int yCheck = Mathf.FloorToInt(pos.y);
@@ -209,7 +230,7 @@ public class Chunk
             // When the added voxel affects other chunks, that chunk also needs to be updated.
             if (!IsVoxelInChunk((int)currentVoxel.x, (int)currentVoxel.y, (int)currentVoxel.z))
             {
-                world.GetChunkFromVector3(currentVoxel + position).UpdateChunk();
+                world.GetChunkFromVector3(currentVoxel + Position).UpdateChunk();
             }
         }
     }
@@ -221,7 +242,7 @@ public class Chunk
         int z = Mathf.FloorToInt(pos.z);
 
         if (!IsVoxelInChunk(x, y, z))
-            return world.CheckIfVoxelTransparent(pos + position);
+            return world.CheckIfVoxelTransparent(pos + Position);
 
         return world.BlockTypes[voxelMapBlockTypes[x, y, z]].isTransparent;
     }

@@ -4,8 +4,9 @@ using UnityEngine;
 
 public static class Structure
 {
-    public static void MakeTree(Vector3 position, Queue<VoxelMode> queue, int minTrunkHeight, int maxTrunkHeight)
+    public static Queue<VoxelMode> MakeTree(Vector3 position, int minTrunkHeight, int maxTrunkHeight)
     {
+        Queue<VoxelMode> queue = new Queue<VoxelMode>();
         int height = (int)(maxTrunkHeight * Noise.Get2DPerlin(new Vector2(position.x, position.y), 250f, 3f));
 
         if(height < minTrunkHeight)
@@ -24,6 +25,7 @@ public static class Structure
                 }
             }
         }
-        
+
+        return queue;
     }
 }
