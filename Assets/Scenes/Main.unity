@@ -2004,6 +2004,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: e68fa3bc5d024bc44b47cbdee0d80265, type: 2}
   - {fileID: 11400000, guid: 2883edfaadf6aae4da95bd8d13a658aa, type: 2}
   - {fileID: 11400000, guid: c6a60961f2c857d45a4202ef4f72940d, type: 2}
+  - {fileID: 11400000, guid: 800d8957f01275a489f3706c13d593e7, type: 2}
 --- !u!1001 &1337380111
 PrefabInstance:
   m_ObjectHideFlags: 0

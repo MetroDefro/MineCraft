@@ -1,10 +1,10 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Chunk
 {
     public bool isVoxelMapPopulated = false;
+    public Queue<VoxelMode> modifications = new Queue<VoxelMode>();
 
     private GameObject chunkObject;
     private MeshRenderer meshRenderer;
@@ -12,7 +12,7 @@ public class Chunk
 
     private ChunkCoord Coord;
     private int vertexIndex = 0;
-    private byte[,,] VoxelMap = new byte[VoxelData.ChunkWidth, VoxelData.ChunkHeight, VoxelData.ChunkWidth];
+    private byte[,,] voxelMapBlockTypes = new byte[VoxelData.ChunkWidth, VoxelData.ChunkHeight, VoxelData.ChunkWidth];
     private List<Vector3> vertices = new List<Vector3>();
     private List<int> triangles = new List<int>();
     private List<int> transparentTriangles = new List<int>();
@@ -57,7 +57,7 @@ public class Chunk
         chunkObject.name = "Chunk " + Coord.x + ", " + Coord.z;
 
         PopulateVoxelMap();
-        UpdateChunkMesh();
+        UpdateChunk();
     }
 
     public byte GetVoxelFromGlobalVector3(Vector3 pos)
@@ -69,7 +69,7 @@ public class Chunk
         xCheck -= Mathf.FloorToInt(chunkObject.transform.position.x);
         zCheck -= Mathf.FloorToInt(chunkObject.transform.position.z);
 
-        return VoxelMap[xCheck, yCheck, zCheck];
+        return voxelMapBlockTypes[xCheck, yCheck, zCheck];
     }
 
     #region private method
@@ -82,7 +82,7 @@ public class Chunk
                 for (int z = 0; z < VoxelData.ChunkWidth; z++)
                 {
                     // Get Block Type
-                    VoxelMap[x, y, z] = world.GetVoxel(new Vector3(x, y, z) + position);
+                    voxelMapBlockTypes[x, y, z] = world.GetVoxelBlockType(new Vector3(x, y, z) + position);
                 }
             }
         }
@@ -90,8 +90,16 @@ public class Chunk
         isVoxelMapPopulated = true;
     }
 
-    private void UpdateChunkMesh()
+    public void UpdateChunk()
     {
+        // If there is something to be modified, set up the voxel block type of the that's position as the id.
+        while (modifications.Count > 0)
+        {
+            VoxelMode v = modifications.Dequeue();
+            Vector3 pos = v.position -= position;
+            voxelMapBlockTypes[(int)pos.x, (int)pos.y, (int)pos.z] = v.id;
+        }
+
         ClearMeshData();
 
         for (int y = 0; y < VoxelData.ChunkHeight; y++)
@@ -100,7 +108,7 @@ public class Chunk
             {
                 for (int z = 0; z < VoxelData.ChunkWidth; z++)
                 {
-                    if (world.BlockTypes[VoxelMap[x, y, z]].isSolid)
+                    if (world.BlockTypes[voxelMapBlockTypes[x, y, z]].isSolid)
                         UpdateMeshData(new Vector3(x, y, z));
                 }
             }
@@ -114,16 +122,18 @@ public class Chunk
         vertexIndex = 0;
         vertices.Clear();
         triangles.Clear();
+        transparentTriangles.Clear();
         uvs.Clear();
     }
 
     private void UpdateMeshData(Vector3 pos)
     {
-        byte blockID = VoxelMap[(int)pos.x, (int)pos.y, (int)pos.z];
+        byte blockID = voxelMapBlockTypes[(int)pos.x, (int)pos.y, (int)pos.z];
         bool isTransparent = world.BlockTypes[blockID].isTransparent;
 
         for (int p = 0; p < 6; p++)
         {
+            // If the face - 1 voxel is not transparent, there is no need to draw it.
             if (CheckVoxel(pos + VoxelData.FaceChecks[p]))
             {
                 for (int i = 0; i < 4; i++)
@@ -170,7 +180,7 @@ public class Chunk
         meshFilter.mesh = mesh;
     }
 
-    private bool IsVoxelInChunk(int x, int y, int z) => x > 0 && x < VoxelData.ChunkWidth -1 && y > 0 && y < VoxelData.ChunkHeight - 1 && z > 0 && z < VoxelData.ChunkWidth - 1;
+    private bool IsVoxelInChunk(int x, int y, int z) => x >= 0 && x < VoxelData.ChunkWidth && y >= 0 && y < VoxelData.ChunkHeight && z >= 0 && z < VoxelData.ChunkWidth;
 
     public void EditVoxel (Vector3 pos, byte newID)
     {
@@ -181,11 +191,11 @@ public class Chunk
         xCheck -= Mathf.FloorToInt(chunkObject.transform.position.x);
         zCheck -= Mathf.FloorToInt(chunkObject.transform.position.z);
 
-        VoxelMap[xCheck, yCheck, zCheck] = newID;
+        voxelMapBlockTypes[xCheck, yCheck, zCheck] = newID;
 
         UpdateSurroundingVoxels(xCheck, yCheck, zCheck);
 
-        UpdateChunkMesh();
+        UpdateChunk();
     }
 
     private void UpdateSurroundingVoxels(int x, int y, int z)
@@ -196,9 +206,10 @@ public class Chunk
         {
             Vector3 currentVoxel = thisVoxel + VoxelData.FaceChecks[p];
 
-            if(!IsVoxelInChunk((int)currentVoxel.x, (int)currentVoxel.y, (int)currentVoxel.z))
+            // When the added voxel affects other chunks, that chunk also needs to be updated.
+            if (!IsVoxelInChunk((int)currentVoxel.x, (int)currentVoxel.y, (int)currentVoxel.z))
             {
-                world.GetChunkFromVector3(currentVoxel + position).UpdateChunkMesh();
+                world.GetChunkFromVector3(currentVoxel + position).UpdateChunk();
             }
         }
     }
@@ -209,11 +220,10 @@ public class Chunk
         int y = Mathf.FloorToInt(pos.y);
         int z = Mathf.FloorToInt(pos.z);
 
-        // if voxel not in chunk
         if (!IsVoxelInChunk(x, y, z))
             return world.CheckIfVoxelTransparent(pos + position);
 
-        return world.BlockTypes[VoxelMap[x, y, z]].isTransparent;
+        return world.BlockTypes[voxelMapBlockTypes[x, y, z]].isTransparent;
     }
 
     private void AddTexture(int textureID)
