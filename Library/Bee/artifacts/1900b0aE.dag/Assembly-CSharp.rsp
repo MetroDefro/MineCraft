@@ -356,12 +356,12 @@
 "Assets/Scripts/CreativeInventory.cs"
 "Assets/Scripts/DebugScreen.cs"
 "Assets/Scripts/DragAnDropHandler.cs"
+"Assets/Scripts/ItemSlot.cs"
 "Assets/Scripts/ItemStack.cs"
 "Assets/Scripts/Noise.cs"
 "Assets/Scripts/Player.cs"
 "Assets/Scripts/Structure.cs"
 "Assets/Scripts/Toolbar.cs"
-"Assets/Scripts/UIItemSlot.cs"
 "Assets/Scripts/VoxelData.cs"
 "Assets/Scripts/World.cs"
 -langversion:9.0

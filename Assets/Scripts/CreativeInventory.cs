@@ -4,29 +4,17 @@ using UnityEngine;
 
 public class CreativeInventory : MonoBehaviour
 {
-    public GameObject slotPrefab;
-    World world;
+    [SerializeField] private ItemSlot slotPrefab;
 
-    List<ItemSlot> slots = new List<ItemSlot>();
+    private List<ItemSlot> slots = new List<ItemSlot>();
 
     void Start()
     {
-        world = FindObjectOfType<World>();
-
-        for(int i = 1; i < world.BlockTypes.Length; i++)
+        for(int i = 1; i < World.instance.BlockTypes.Length; i++)
         {
-            GameObject newSlot = Instantiate(slotPrefab, transform);
-
-            ItemStack stack = new ItemStack((byte)i, 64);
-            ItemSlot slot = new ItemSlot(newSlot.GetComponent<UIItemSlot>(), stack);
+            ItemSlot slot = Instantiate(slotPrefab, transform).InsertStack(new ItemStack((byte)i, 64));
             slot.isCreative = true;
-
+            slots.Add(slot);
         }
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }

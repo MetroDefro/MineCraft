@@ -4,18 +4,18 @@ using UnityEngine;
 
 public class Toolbar : MonoBehaviour
 {
-    public UIItemSlot[] slots;
+    public int SlotIndex = 0;
+    public ItemSlot[] Slots;
 
-    public RectTransform highlight;
-    public int slotIndex = 0;
+    [SerializeField] private RectTransform highlight;
 
     private void Start()
     {
         byte index = 1;
-        foreach(UIItemSlot s in slots)
+        foreach(ItemSlot s in Slots)
         {
             ItemStack stack = new ItemStack(index, Random.Range(2, 65));
-            ItemSlot slot = new ItemSlot(s, stack);
+            s.InsertStack(stack);
             index++;
         }
     }
@@ -29,16 +29,16 @@ public class Toolbar : MonoBehaviour
         {
 
             if (scroll > 0)
-                slotIndex--;
+                SlotIndex--;
             else
-                slotIndex++;
+                SlotIndex++;
 
-            if (slotIndex > slots.Length - 1)
-                slotIndex = 0;
-            if (slotIndex < 0)
-                slotIndex = slots.Length - 1;
+            if (SlotIndex > Slots.Length - 1)
+                SlotIndex = 0;
+            if (SlotIndex < 0)
+                SlotIndex = Slots.Length - 1;
 
-            highlight.position = slots[slotIndex].slotIcon.transform.position;
+            highlight.position = Slots[SlotIndex].slotIcon.transform.position;
         }
 
 

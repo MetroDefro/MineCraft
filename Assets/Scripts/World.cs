@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class World : MonoBehaviour
 {
+    public static World instance;
+
     public Transform PlayerTransform;
     public ChunkCoord PlayerChunkCoord;
     public GameObject creativeInventoryWindow;
@@ -51,6 +53,16 @@ public class World : MonoBehaviour
    
     private bool applyingModifications = false;
     private bool inUI = false;
+
+    private void Awake()
+    {
+        if(instance != null)
+        {
+            Destroy(this.gameObject);
+        }
+
+        instance = this;
+    }
 
     private void Start()
     {
@@ -180,7 +192,7 @@ public class World : MonoBehaviour
             for(int z = chunkStartPosition; z < chunkEndPosition; z++)
             {
                 ChunkCoord coord = new ChunkCoord(x, z);
-                chunks[x, z] = new Chunk(coord, this, material, transparentMaterial, true);
+                chunks[x, z] = new Chunk(coord, material, transparentMaterial, true);
                 currentActiveChunks.Add(coord);
             }
         }
@@ -229,7 +241,7 @@ public class World : MonoBehaviour
 
                 if (chunks[c.x, c.z] == null)
                 {
-                    chunks[c.x, c.z] = new Chunk(c, this, material, transparentMaterial, true);
+                    chunks[c.x, c.z] = new Chunk(c, material, transparentMaterial, true);
                     currentActiveChunks.Add(c);
                 }
 
@@ -275,7 +287,7 @@ public class World : MonoBehaviour
                 {
                     if (chunks[x, z] == null)
                     {
-                        chunks[x, z] = new Chunk(coord, this, material, transparentMaterial, false);
+                        chunks[x, z] = new Chunk(coord, material, transparentMaterial, false);
                         chunksToCreate.Add(coord);
                     }   
                     else if (!chunks[x, z].IsActive)

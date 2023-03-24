@@ -5,7 +5,6 @@ using TMPro;
 
 public class DebugScreen : MonoBehaviour
 {
-    private World world;
     [SerializeField] private TextMeshProUGUI text;
 
     private float frameRate;
@@ -16,8 +15,6 @@ public class DebugScreen : MonoBehaviour
 
     private void Start()
     {
-        world = GameObject.FindObjectOfType<World>();
-
         halfWorldSizeInVoxels = VoxelData.WorldSizeInVoxels / 2;
         halfWorldSizeInChunks = VoxelData.WorldSizeInChunks / 2;
     }
@@ -28,9 +25,9 @@ public class DebugScreen : MonoBehaviour
         debugText += "\n";
         debugText += frameRate + "fps";
         debugText += "\n\n";
-        debugText += "XYZ: " + (Mathf.FloorToInt(world.PlayerTransform.position.x) - halfWorldSizeInVoxels) + " / " + Mathf.FloorToInt(world.PlayerTransform.position.y) + " / " + (Mathf.FloorToInt(world.PlayerTransform.position.z) - halfWorldSizeInVoxels);
+        debugText += "XYZ: " + (Mathf.FloorToInt(World.instance.PlayerTransform.position.x) - halfWorldSizeInVoxels) + " / " + Mathf.FloorToInt(World.instance.PlayerTransform.position.y) + " / " + (Mathf.FloorToInt(World.instance.PlayerTransform.position.z) - halfWorldSizeInVoxels);
         debugText += "\n";
-        debugText += "Chunk: " + (world.PlayerChunkCoord.x - halfWorldSizeInChunks) + " / " + (world.PlayerChunkCoord.z - halfWorldSizeInChunks);
+        debugText += "Chunk: " + (World.instance.PlayerChunkCoord.x - halfWorldSizeInChunks) + " / " + (World.instance.PlayerChunkCoord.z - halfWorldSizeInChunks);
 
         text.text = debugText;
 

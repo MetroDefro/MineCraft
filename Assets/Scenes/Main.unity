@@ -222,7 +222,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a29134d2f1b32946882ab5a0ffc54c5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  slots:
+  SlotIndex: 0
+  Slots:
   - {fileID: 1026394188}
   - {fileID: 1528749563}
   - {fileID: 2085348716}
@@ -233,7 +234,6 @@ MonoBehaviour:
   - {fileID: 541233123}
   - {fileID: 589716677}
   highlight: {fileID: 190427386}
-  slotIndex: 0
 --- !u!1 &166241808
 GameObject:
   m_ObjectHideFlags: 0
@@ -1260,7 +1260,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   camera: {fileID: 963194228}
-  world: {fileID: 1235233155}
   isGrounded: 0
   isSprinting: 0
   walkSpeed: 3
@@ -1389,7 +1388,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bacfdd01b01903e459d8ca33c6e4f2ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  slotPrefab: {fileID: 3292818882028690415, guid: 4a6b800fcca6797498bd600da1a73379, type: 3}
+  slotPrefab: {fileID: 1026394188, guid: 4a6b800fcca6797498bd600da1a73379, type: 3}
 --- !u!1 &940125852
 GameObject:
   m_ObjectHideFlags: 0

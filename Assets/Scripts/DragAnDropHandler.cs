@@ -6,24 +6,16 @@ using UnityEngine.UI;
 
 public class DragAnDropHandler : MonoBehaviour
 {
-    [SerializeField] private UIItemSlot cursorSlot = null;
-    private ItemSlot cursorItemSlot;
-
-    [SerializeField] private GraphicRaycaster raycaster= null;
-    private PointerEventData pointerEventData;
+    [SerializeField] private ItemSlot cursorSlot = null;
+    [SerializeField] private GraphicRaycaster raycaster = null;
     [SerializeField] private EventSystem eventSystem = null;
 
-    World world;
+    private PointerEventData pointerEventData;
 
-    private void Start()
-    {
-        world = FindObjectOfType<World>();
-        cursorItemSlot = new ItemSlot(cursorSlot);
-    }
 
     private void Update()
     {
-        if (!world.InUI)
+        if (!World.instance.InUI)
             return;
 
         cursorSlot.transform.position = Input.mousePosition;
@@ -34,47 +26,43 @@ public class DragAnDropHandler : MonoBehaviour
         }
     }
 
-    private void HandleSlotClick(UIItemSlot clickedSlot)
+    private void HandleSlotClick(ItemSlot clickedSlot)
     {
         if (clickedSlot == null)
             return;
 
-        if (!cursorSlot.HasItem && !clickedSlot.HasItem)
-            return;
-
-        if (clickedSlot.itemSlot.isCreative)
+        if (clickedSlot.isCreative)
         {
-            cursorItemSlot.EmptySlot();
-            cursorItemSlot.InsertStack(clickedSlot.itemSlot.stack);
+            cursorSlot.EmptySlot();
+            cursorSlot.InsertStack(clickedSlot.stack);
         }
 
-        if(!cursorSlot.HasItem && clickedSlot.HasItem)
+        if (!cursorSlot.HasItem)
         {
-            cursorItemSlot.InsertStack(clickedSlot.itemSlot.TakeAll());
-            return;
+            if (clickedSlot.HasItem)
+                cursorSlot.InsertStack(clickedSlot.TakeAll());
         }
-
-        if(cursorSlot.HasItem && !clickedSlot.HasItem)
+        else
         {
-            clickedSlot.itemSlot.InsertStack(cursorItemSlot.TakeAll());
-            return;
-        }
-
-        if(cursorItemSlot.HasItem && clickedSlot.HasItem)
-        {
-            if(cursorSlot.itemSlot.stack.id != clickedSlot.itemSlot.stack.id)
+            if (clickedSlot.HasItem)
             {
-                ItemStack oldCursorSlot = cursorSlot.itemSlot.TakeAll();
-                ItemStack oldSlot = clickedSlot.itemSlot.TakeAll();
+                if (cursorSlot.stack.id != clickedSlot.stack.id)
+                {
+                    ItemStack oldCursorSlot = cursorSlot.TakeAll();
+                    ItemStack oldSlot = clickedSlot.TakeAll();
 
-                clickedSlot.itemSlot.InsertStack(oldCursorSlot);
-                cursorSlot.itemSlot.InsertStack(oldSlot);
+                    clickedSlot.InsertStack(oldCursorSlot);
+                    cursorSlot.InsertStack(oldSlot);
+                }
+            } 
+            else
+            {
+                clickedSlot.InsertStack(cursorSlot.TakeAll());
             }
         }
-
     }
 
-    private UIItemSlot CheckForSlot()
+    private ItemSlot CheckForSlot()
     {
         pointerEventData = new PointerEventData(eventSystem);
         pointerEventData.position = Input.mousePosition;
@@ -84,8 +72,8 @@ public class DragAnDropHandler : MonoBehaviour
 
         foreach(RaycastResult result in results)
         {
-            if (result.gameObject.TryGetComponent(out UIItemSlot uiItemSlot))
-                return uiItemSlot;
+            if (result.gameObject.TryGetComponent(out ItemSlot itemSlot))
+                return itemSlot;
         }
 
         return null;
