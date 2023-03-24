@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using System.Threading;
 
 public class Chunk
 {
@@ -23,7 +22,6 @@ public class Chunk
 
     private bool isActive;
     private bool isVoxelMapPopulated = false;
-    private bool threadLocked = false;
 
     public bool IsActive
     {
@@ -36,7 +34,7 @@ public class Chunk
         }
     }
 
-    public bool IsEditable { get => isVoxelMapPopulated || threadLocked; }
+    public bool IsEditable { get => isVoxelMapPopulated;  }
 
     public Chunk(ChunkCoord coord, World world, Material material, Material transparentMaterial, bool generateOnLoad)
     {
@@ -59,12 +57,9 @@ public class Chunk
         chunkObject.transform.position = new Vector3(Coord.x * VoxelData.ChunkWidth, 0f, Coord.z * VoxelData.ChunkWidth);
         chunkObject.name = "Chunk " + Coord.x + ", " + Coord.z;
 
-        Thread PopulateThread = new Thread(new ThreadStart(PopulateVoxelMap));
-        PopulateThread.Start();
-
         Position = chunkObject.transform.position;
 
-        UpdateChunk();
+        PopulateVoxelMap();
     }
 
     public byte GetVoxelFromGlobalVector3(Vector3 pos)
@@ -94,20 +89,12 @@ public class Chunk
             }
         }
 
-        // UpdateChunk();
+        UpdateChunk();
         isVoxelMapPopulated = true;
     }
 
-    public void StartUpdateChunk()
+    public void UpdateChunk()
     {
-        Thread updateThread = new Thread(new ThreadStart(UpdateChunk));
-        updateThread.Start();
-    }
-
-    private void UpdateChunk()
-    {
-        threadLocked = true;
-
         // If there is something to be modified, set up the voxel block type of the that's position as the id.
         while (modifications.Count > 0)
         {
@@ -130,12 +117,8 @@ public class Chunk
             }
         }
 
-        lock (world.chunksToDraw)
-        {
-            world.chunksToDraw.Enqueue(this);
-        }
-        
-        threadLocked = false;
+        world.chunksToDraw.Enqueue(this);
+
     }
 
     private void ClearMeshData()

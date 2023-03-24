@@ -180,7 +180,7 @@ public class World : MonoBehaviour
         {
             if (chunksToUpdate[index].IsEditable)
             {
-                chunksToUpdate[index].StartUpdateChunk();
+                chunksToUpdate[index].UpdateChunk();
                 chunksToUpdate.RemoveAt(index);
                 updated = true;
             }
@@ -239,6 +239,8 @@ public class World : MonoBehaviour
         playerLastChunkCoord = PlayerChunkCoord;
 
         List<ChunkCoord> previouslyActiveChunks = new List<ChunkCoord>(currentActiveChunks);
+
+        currentActiveChunks.Clear();
 
         for (int x = playerCoord.x - VoxelData.ViewDistanceInChunks; x < playerCoord.x + VoxelData.ViewDistanceInChunks; x++)
         {
