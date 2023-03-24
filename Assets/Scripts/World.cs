@@ -10,6 +10,8 @@ public class World : MonoBehaviour
     public BlockType[] BlockTypes => blockTypes;
     public Queue<Chunk> chunksToDraw = new Queue<Chunk>();
 
+    public bool InUI { get; set; }
+
     [SerializeField] private int Seed;
     [SerializeField] private BiomeAttributes biome;
     [SerializeField] private Material material;
@@ -25,8 +27,9 @@ public class World : MonoBehaviour
     private List<ChunkCoord> chunksToCreate = new List<ChunkCoord>();
     private List<Chunk> chunksToUpdate = new List<Chunk>();
     private Queue<Queue<VoxelMode>> modifications = new Queue<Queue<VoxelMode>>();
+   
     private bool applyingModifications = false;
-       
+    private bool inUI = false;
 
     private void Start()
     {
