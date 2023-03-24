@@ -6,11 +6,32 @@ public class World : MonoBehaviour
 {
     public Transform PlayerTransform;
     public ChunkCoord PlayerChunkCoord;
+    public GameObject creativeInventoryWindow;
+    public GameObject cursorSlot;
     
     public BlockType[] BlockTypes => blockTypes;
     public Queue<Chunk> chunksToDraw = new Queue<Chunk>();
 
-    public bool InUI { get; set; }
+    public bool InUI 
+    { 
+        get => inUI; 
+        set 
+        {
+            inUI = value;
+            if (inUI)
+            {
+                Cursor.lockState = CursorLockMode.None;
+                creativeInventoryWindow.SetActive(true);
+                cursorSlot.SetActive(true);
+            }
+            else
+            {
+                Cursor.lockState = CursorLockMode.Locked;
+                creativeInventoryWindow.SetActive(false);
+                cursorSlot.SetActive(false);
+            }
+        } 
+    }
 
     [SerializeField] private int Seed;
     [SerializeField] private BiomeAttributes biome;
