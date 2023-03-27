@@ -6,6 +6,11 @@ public class World : MonoBehaviour
 {
     public static World instance;
 
+    [Range(0.95f, 0f)]
+    public float GlobalLightingLevel;
+    public Color Day;
+    public Color Night;
+
     public Transform PlayerTransform;
     public ChunkCoord PlayerChunkCoord;
     public GameObject creativeInventoryWindow;
@@ -33,6 +38,7 @@ public class World : MonoBehaviour
     [SerializeField] private GameObject DebugScreen;
     [SerializeField] private BlockType[] blockTypes;
 
+    private Camera mainCamera;
     private Vector3 spawnPosition;
     private ChunkCoord playerLastChunkCoord;
 
@@ -58,6 +64,7 @@ public class World : MonoBehaviour
     private void Start()
     {
         Random.InitState(Seed);
+        mainCamera = Camera.main;
 
         spawnPosition = new Vector3((VoxelData.WorldSizeInChunks * VoxelData.ChunkWidth) / 2f, VoxelData.ChunkHeight - 40f, (VoxelData.WorldSizeInChunks * VoxelData.ChunkWidth) / 2f);
         GenerateWorld();
@@ -68,6 +75,9 @@ public class World : MonoBehaviour
     private void Update()
     {
         PlayerChunkCoord = GetChunkCoordFromVector3(PlayerTransform.position);
+
+        Shader.SetGlobalFloat("GlobalLightLevel", GlobalLightingLevel);
+        mainCamera.backgroundColor = Color.Lerp(Day, Night, GlobalLightingLevel);
 
         if (!PlayerChunkCoord.Equals(playerLastChunkCoord))
             CheckViewDistance();
@@ -183,7 +193,7 @@ public class World : MonoBehaviour
             for(int z = chunkStartPosition; z < chunkEndPosition; z++)
             {
                 ChunkCoord coord = new ChunkCoord(x, z);
-                chunks[x, z] = new Chunk(coord, material, transparentMaterial, true);
+                chunks[x, z] = new Chunk(coord, material, true);
                 currentActiveChunks.Add(coord);
             }
         }
@@ -194,7 +204,7 @@ public class World : MonoBehaviour
         ChunkCoord c = chunksToCreate[0];
         chunksToCreate.RemoveAt(0);
         currentActiveChunks.Add(c);
-        chunks[c.x, c.z].Init(material, transparentMaterial);
+        chunks[c.x, c.z].Init(material);
     }
 
     private void UpdateChunks()
@@ -232,7 +242,7 @@ public class World : MonoBehaviour
 
                 if (chunks[c.x, c.z] == null)
                 {
-                    chunks[c.x, c.z] = new Chunk(c, material, transparentMaterial, true);
+                    chunks[c.x, c.z] = new Chunk(c, material, true);
                     currentActiveChunks.Add(c);
                 }
 
@@ -278,7 +288,7 @@ public class World : MonoBehaviour
                 {
                     if (chunks[x, z] == null)
                     {
-                        chunks[x, z] = new Chunk(coord, material, transparentMaterial, false);
+                        chunks[x, z] = new Chunk(coord, material, false);
                         chunksToCreate.Add(coord);
                     }   
                     else if (!chunks[x, z].IsActive)
