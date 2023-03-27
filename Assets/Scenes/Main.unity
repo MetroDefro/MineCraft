@@ -795,8 +795,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cursorSlot: {fileID: 1793158333}
-  raycaster: {fileID: 366521974}
-  eventSystem: {fileID: 1770743017}
+  creativeInventory: {fileID: 907805570}
+  toolbar: {fileID: 6522662}
 --- !u!1001 &541233121
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1389,6 +1389,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   slotPrefab: {fileID: 1026394188, guid: 4a6b800fcca6797498bd600da1a73379, type: 3}
+  Slots: []
 --- !u!1 &940125852
 GameObject:
   m_ObjectHideFlags: 0
@@ -2199,6 +2200,46 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 366521977}
     m_Modifications:
+    - target: {fileID: 554767038, guid: 4a6b800fcca6797498bd600da1a73379, type: 3}
+      propertyPath: m_Pivot.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 554767038, guid: 4a6b800fcca6797498bd600da1a73379, type: 3}
+      propertyPath: m_Pivot.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 554767038, guid: 4a6b800fcca6797498bd600da1a73379, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 554767038, guid: 4a6b800fcca6797498bd600da1a73379, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 554767038, guid: 4a6b800fcca6797498bd600da1a73379, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 554767038, guid: 4a6b800fcca6797498bd600da1a73379, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 554767038, guid: 4a6b800fcca6797498bd600da1a73379, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 48
+      objectReference: {fileID: 0}
+    - target: {fileID: 554767038, guid: 4a6b800fcca6797498bd600da1a73379, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 40
+      objectReference: {fileID: 0}
+    - target: {fileID: 554767038, guid: 4a6b800fcca6797498bd600da1a73379, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -8
+      objectReference: {fileID: 0}
+    - target: {fileID: 554767038, guid: 4a6b800fcca6797498bd600da1a73379, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3292818882028690412, guid: 4a6b800fcca6797498bd600da1a73379, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -2301,6 +2342,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3292818882028690415, guid: 4a6b800fcca6797498bd600da1a73379, type: 3}
       propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3292818882425298400, guid: 4a6b800fcca6797498bd600da1a73379, type: 3}
+      propertyPath: m_RaycastTarget
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents:

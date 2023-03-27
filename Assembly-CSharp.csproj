@@ -60,15 +60,15 @@
     <Compile Include="Assets\Scripts\DebugScreen.cs" />
     <Compile Include="Assets\Scripts\BlockType.cs" />
     <Compile Include="Assets\Scripts\BiomeAttributes.cs" />
-    <Compile Include="Assets\Scripts\Toolbar.cs" />
-    <Compile Include="Assets\Scripts\ItemSlot.cs" />
+    <Compile Include="Assets\Scripts\Item\Toolbar.cs" />
+    <Compile Include="Assets\Scripts\Item\ItemSlot.cs" />
     <Compile Include="Assets\Scripts\VoxelData.cs" />
-    <Compile Include="Assets\Scripts\DragAnDropHandler.cs" />
+    <Compile Include="Assets\Scripts\Item\InventoryPresenter.cs" />
     <Compile Include="Assets\Scripts\Chunk.cs" />
-    <Compile Include="Assets\Scripts\CreativeInventory.cs" />
+    <Compile Include="Assets\Scripts\Item\CreativeInventory.cs" />
     <Compile Include="Assets\Scripts\Structure.cs" />
     <Compile Include="Assets\Scripts\World.cs" />
-    <Compile Include="Assets\Scripts\ItemStack.cs" />
+    <Compile Include="Assets\Scripts\Item\ItemStack.cs" />
     <Compile Include="Assets\Scripts\Player.cs" />
   </ItemGroup>
   <ItemGroup>

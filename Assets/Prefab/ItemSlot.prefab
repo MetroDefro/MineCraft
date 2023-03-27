@@ -226,10 +226,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 63ced21e9f1ad3446a4130cc58034c11, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isLinked: 0
   slotImage: {fileID: 3292818882028690413}
   slotIcon: {fileID: 3292818882425298400}
   slotAmount: {fileID: 554767039}
+  isCreative: 0
 --- !u!1 &3292818882425298402
 GameObject:
   m_ObjectHideFlags: 0

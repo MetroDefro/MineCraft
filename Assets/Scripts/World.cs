@@ -20,18 +20,9 @@ public class World : MonoBehaviour
         set 
         {
             inUI = value;
-            if (inUI)
-            {
-                Cursor.lockState = CursorLockMode.None;
-                creativeInventoryWindow.SetActive(true);
-                cursorSlot.SetActive(true);
-            }
-            else
-            {
-                Cursor.lockState = CursorLockMode.Locked;
-                creativeInventoryWindow.SetActive(false);
-                cursorSlot.SetActive(false);
-            }
+            creativeInventoryWindow.SetActive(inUI);
+            cursorSlot.SetActive(inUI);
+            Cursor.lockState = inUI ? CursorLockMode.None : CursorLockMode.Locked;
         } 
     }
 
