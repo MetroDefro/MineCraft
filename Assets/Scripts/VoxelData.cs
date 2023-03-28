@@ -8,6 +8,11 @@ public class VoxelData : MonoBehaviour
     public static readonly int ChunkHeight = 128;
     public static readonly int WorldSizeInChunks = 100;
 
+    // Lighting Value
+    public static float minLightLevel = 0.15f;
+    public static float maxLightLevel = 0.8f;
+    public static float lightFalloff = 0.08f;
+
     public static int WorldSizeInVoxels { get => WorldSizeInChunks * ChunkWidth; }
 
     public static readonly int ViewDistanceInChunks = 5;

@@ -14,7 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   blockName: Glass
   isSolid: 1
-  isTransparent: 1
+  renderNeighborFaces: 1
+  transparency: 1
   icon: {fileID: 577060505, guid: e8041fdfe6e48e8419bffd6dc579ad79, type: 3}
   backFaceTexture: 3
   frontFaceTexture: 3

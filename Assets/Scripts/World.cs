@@ -6,7 +6,7 @@ public class World : MonoBehaviour
 {
     public static World instance;
 
-    [Range(0.95f, 0f)]
+    [Range(0f, 1f)]
     public float GlobalLightingLevel;
     public Color Day;
     public Color Night;
@@ -31,10 +31,14 @@ public class World : MonoBehaviour
         } 
     }
 
+    [Header ("World Generation Values")]
     [SerializeField] private int Seed;
     [SerializeField] private BiomeAttributes biome;
+
+    [Header("Performance")]
+
+
     [SerializeField] private Material material;
-    [SerializeField] private Material transparentMaterial;
     [SerializeField] private GameObject DebugScreen;
     [SerializeField] private BlockType[] blockTypes;
 
@@ -66,6 +70,9 @@ public class World : MonoBehaviour
         Random.InitState(Seed);
         mainCamera = Camera.main;
 
+        Shader.SetGlobalFloat("minGlobalLightLevel", VoxelData.minLightLevel);
+        Shader.SetGlobalFloat("maxGlobalLightLevel", VoxelData.maxLightLevel);
+
         spawnPosition = new Vector3((VoxelData.WorldSizeInChunks * VoxelData.ChunkWidth) / 2f, VoxelData.ChunkHeight - 40f, (VoxelData.WorldSizeInChunks * VoxelData.ChunkWidth) / 2f);
         GenerateWorld();
         PlayerTransform.position = spawnPosition;
@@ -77,7 +84,7 @@ public class World : MonoBehaviour
         PlayerChunkCoord = GetChunkCoordFromVector3(PlayerTransform.position);
 
         Shader.SetGlobalFloat("GlobalLightLevel", GlobalLightingLevel);
-        mainCamera.backgroundColor = Color.Lerp(Day, Night, GlobalLightingLevel);
+        mainCamera.backgroundColor = Color.Lerp(Night, Day, GlobalLightingLevel);
 
         if (!PlayerChunkCoord.Equals(playerLastChunkCoord))
             CheckViewDistance();
@@ -112,23 +119,23 @@ public class World : MonoBehaviour
             return false;
 
         if (chunks[thisChunkCoord.x, thisChunkCoord.z] != null && chunks[thisChunkCoord.x, thisChunkCoord.z].IsEditable)
-            return blockTypes[chunks[thisChunkCoord.x, thisChunkCoord.z].GetVoxelFromGlobalVector3(pos)].isSolid;
+            return blockTypes[chunks[thisChunkCoord.x, thisChunkCoord.z].GetVoxelFromGlobalVector3(pos).id].isSolid;
        
         return blockTypes[GetVoxelBlockType(pos)].isSolid;
     }
 
-    public bool CheckIfVoxelTransparent(Vector3 pos)
+    public VoxelState GetVoxelState(Vector3 pos)
     {
         ChunkCoord thisChunkCoord = new ChunkCoord(pos);
 
         // When a player creating a block in-game
         if (!IsChunkInWorld(thisChunkCoord) || pos.y < 0 || pos.y > VoxelData.ChunkHeight)
-            return false;
+            return null;
 
         if (chunks[thisChunkCoord.x, thisChunkCoord.z] != null && chunks[thisChunkCoord.x, thisChunkCoord.z].IsEditable)
-            return blockTypes[chunks[thisChunkCoord.x, thisChunkCoord.z].GetVoxelFromGlobalVector3(pos)].isTransparent;
+            return chunks[thisChunkCoord.x, thisChunkCoord.z].GetVoxelFromGlobalVector3(pos);
 
-        return blockTypes[GetVoxelBlockType(pos)].isTransparent;
+        return new VoxelState(GetVoxelBlockType(pos));
     }
 
     public byte GetVoxelBlockType(Vector3 pos)

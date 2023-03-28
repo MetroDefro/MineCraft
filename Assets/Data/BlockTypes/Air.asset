@@ -14,7 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   blockName: Air
   isSolid: 0
-  isTransparent: 1
+  renderNeighborFaces: 1
+  transparency: 1
   icon: {fileID: 0}
   backFaceTexture: 0
   frontFaceTexture: 0

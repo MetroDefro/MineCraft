@@ -35,6 +35,8 @@ Shader "Minecraft/Blocks"
 
 			sampler2D _MainTex;
 			float GlobalLightLevel;
+			float minGlobalLightLevel;
+			float maxGlobalLightLevel;
 
 			v2f vertFunction(appdata v) {
 				v2f o;
@@ -48,9 +50,20 @@ Shader "Minecraft/Blocks"
 
 			fixed4 fragFunction(v2f i) : SV_Target{
 				fixed4 col = tex2D(_MainTex, i.uv);
-				float localLightLevel = clamp(GlobalLightLevel + i.color.a, 0, 1);
+
+				float shade = (maxGlobalLightLevel - minGlobalLightLevel) * GlobalLightLevel + minGlobalLightLevel;
+
+				// (0.75 - 0.25) = 0.5
+				// 0.5 * 0.4 = 0.2
+				// 0.2 + 0.25 = 0.45
+
+				shade *= i.color.a;
+				shade = clamp(1 - shade, minGlobalLightLevel, maxGlobalLightLevel);
+
+				// 1 - 0.95 = 0.05
+
 				clip(col.a - 1);
-				col = lerp(col, float4(0, 0, 0, 1), localLightLevel);
+				col = lerp(col, float4(0, 0, 0, 1), shade);
 
 				return col;
 			}
