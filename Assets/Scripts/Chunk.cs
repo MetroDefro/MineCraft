@@ -5,12 +5,12 @@ public class Chunk
 {
     public Queue<VoxelMode> modifications = new Queue<VoxelMode>();
     public Vector3 Position;
+    public ChunkCoord Coord;
 
     private GameObject chunkObject;
     private MeshRenderer meshRenderer;
     private MeshFilter meshFilter;
 
-    private ChunkCoord Coord;
     private int vertexIndex = 0;
     private VoxelState[,,] voxelMapBlockTypes = new VoxelState[VoxelData.ChunkWidth, VoxelData.ChunkHeight, VoxelData.ChunkWidth];
     private List<Vector3> vertices = new List<Vector3>();
@@ -34,13 +34,10 @@ public class Chunk
 
     public bool IsEditable { get => isVoxelMapPopulated;  }
 
-    public Chunk(ChunkCoord coord, Material material, bool generateOnLoad)
+    public Chunk(ChunkCoord coord)
     {
         this.Coord = coord;
         isActive = true;
-
-        if(generateOnLoad)
-            Init(material);
     }
 
     public void Init(Material material)
@@ -86,8 +83,12 @@ public class Chunk
             }
         }
 
-        UpdateChunk();
         isVoxelMapPopulated = true;
+
+        lock (World.instance.ChunkUpdateThreadLock)
+        {
+            World.instance.chunksToUpdate.Add(this);
+        }
     }
 
     public void UpdateChunk()
@@ -249,9 +250,11 @@ public class Chunk
 
         voxelMapBlockTypes[xCheck, yCheck, zCheck].id = newID;
 
-        UpdateSurroundingVoxels(xCheck, yCheck, zCheck);
-
-        UpdateChunk();
+        lock (World.instance.ChunkUpdateThreadLock)
+        {
+            World.instance.chunksToUpdate.Insert(0, this);
+            UpdateSurroundingVoxels(xCheck, yCheck, zCheck);
+        }
     }
 
     private void UpdateSurroundingVoxels(int x, int y, int z)
@@ -265,7 +268,7 @@ public class Chunk
             // When the added voxel affects other chunks, that chunk also needs to be updated.
             if (!IsVoxelInChunk((int)currentVoxel.x, (int)currentVoxel.y, (int)currentVoxel.z))
             {
-                World.instance.GetChunkFromVector3(currentVoxel + Position).UpdateChunk();
+                World.instance.chunksToUpdate.Insert(0, World.instance.GetChunkFromVector3(currentVoxel + Position));
             }
         }
     }

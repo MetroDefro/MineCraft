@@ -1676,7 +1676,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c79ac4991ec89b044b339f24d9268a64, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalLightingLevel: 0.207
+  GlobalLightingLevel: 1
   Day: {r: 0, g: 0.94610643, b: 1, a: 0}
   Night: {r: 0.009462348, g: 0, b: 0.254717, a: 0}
   PlayerTransform: {fileID: 823385538}
@@ -1684,6 +1684,7 @@ MonoBehaviour:
   cursorSlot: {fileID: 1120071629}
   Seed: 2147483647
   biome: {fileID: 11400000, guid: 0ce1a7b9063ad694a9dace01c5ec6678, type: 2}
+  enableThreading: 0
   material: {fileID: 2100000, guid: 428f69a984cb5cb4bab88613731646d7, type: 2}
   DebugScreen: {fileID: 166241808}
   blockTypes:
