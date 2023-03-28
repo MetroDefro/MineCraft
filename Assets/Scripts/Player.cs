@@ -4,7 +4,37 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    [SerializeField] private Transform camera;
+    public Transform highlightBlock;
+    public Transform placeBlock;
+    public Toolbar toolbar;
+    public float checkIncrement = 0.1f;
+    public float reach = 8f;
+
+    public bool front
+    {
+        get => World.instance.CheckForVoxel(ConvertFloat3ToVector3int(transform.position.x, transform.position.y, transform.position.z + playerWidth)) ||
+            World.instance.CheckForVoxel(ConvertFloat3ToVector3int(transform.position.x, transform.position.y + 1f, transform.position.z + playerWidth));
+    }
+
+    public bool back
+    {
+        get => World.instance.CheckForVoxel(ConvertFloat3ToVector3int(transform.position.x, transform.position.y, transform.position.z - playerWidth)) ||
+                World.instance.CheckForVoxel(ConvertFloat3ToVector3int(transform.position.x, transform.position.y + 1f, transform.position.z - playerWidth));
+    }
+
+    public bool left
+    {
+        get => World.instance.CheckForVoxel(ConvertFloat3ToVector3int(transform.position.x - playerWidth, transform.position.y, transform.position.z)) ||
+                World.instance.CheckForVoxel(ConvertFloat3ToVector3int(transform.position.x - playerWidth, transform.position.y + 1f, transform.position.z));
+    }
+
+    public bool right
+    {
+        get => World.instance.CheckForVoxel(ConvertFloat3ToVector3int(transform.position.x + playerWidth, transform.position.y, transform.position.z)) ||
+                World.instance.CheckForVoxel(ConvertFloat3ToVector3int(transform.position.x + playerWidth, transform.position.y + 1f, transform.position.z));
+    }
+
+    [SerializeField] private Transform cameraTransform;
 
     [SerializeField] private bool isGrounded;
     [SerializeField] private bool isSprinting;
@@ -20,17 +50,10 @@ public class Player : MonoBehaviour
     private float horizontal;
     private float vertical;
     private float mouseHorizontal;
-    private float mouseVertical; 
+    private float mouseVertical;
     private float verticalMomentum;
     private Vector3 velocity;
     private bool jumpRequest;
-
-    public Transform highlightBlock;
-    public Transform placeBlock;
-    public float checkIncrement = 0.1f;
-    public float reach = 8f;
-
-    public Toolbar toolbar;
 
     private void Awake()
     {
@@ -51,7 +74,7 @@ public class Player : MonoBehaviour
                 Jump();
 
             transform.Rotate(Vector3.up * mouseHorizontal * rotateSpeed * Time.fixedDeltaTime);
-            camera.Rotate(Vector3.right * -mouseVertical * rotateSpeed * Time.fixedDeltaTime);
+            cameraTransform.Rotate(Vector3.right * -mouseVertical * rotateSpeed * Time.fixedDeltaTime);
             transform.Translate(velocity, Space.World);
         }
     }
@@ -123,14 +146,14 @@ public class Player : MonoBehaviour
         {
             // Destroy block.
             if (Input.GetMouseButtonDown(0))
-                World.instance.GetChunkFromVector3(highlightBlock.position).EditVoxel(highlightBlock.position, 0);
+                World.instance.GetChunkFromVector3(highlightBlock.position).EditVoxel(ConvertVector3ToVector3int(highlightBlock.position), 0);
 
             // Place block.
             if (Input.GetMouseButtonDown(1))
             {
                 if (toolbar.Slots[toolbar.SlotIndex].HasItem)
                 {
-                    World.instance.GetChunkFromVector3(placeBlock.position).EditVoxel(placeBlock.position, toolbar.Slots[toolbar.SlotIndex].stack.id);
+                    World.instance.GetChunkFromVector3(placeBlock.position).EditVoxel(ConvertVector3ToVector3int(placeBlock.position), toolbar.Slots[toolbar.SlotIndex].stack.id);
                     toolbar.Slots[toolbar.SlotIndex].Take(1);
                 }
             }
@@ -144,11 +167,12 @@ public class Player : MonoBehaviour
 
         while(step < reach)
         {
-            Vector3 pos = camera.position + (camera.forward * step);
+            Vector3 pos = cameraTransform.position + (cameraTransform.forward * step);
+            Vector3Int posInt = new Vector3Int(Mathf.FloorToInt(pos.x), Mathf.FloorToInt(pos.y), Mathf.FloorToInt(pos.z));
 
-            if (World.instance.CheckForVoxel(pos))
+            if (World.instance.CheckForVoxel(posInt))
             {
-                highlightBlock.position = new Vector3(Mathf.FloorToInt(pos.x), Mathf.FloorToInt(pos.y), Mathf.FloorToInt(pos.z));
+                highlightBlock.position = posInt;
                 placeBlock.position = lastPos;
 
                 highlightBlock.gameObject.SetActive(true);
@@ -157,7 +181,7 @@ public class Player : MonoBehaviour
                 return;
             }
 
-            lastPos = new Vector3(Mathf.FloorToInt(pos.x), Mathf.FloorToInt(pos.y), Mathf.FloorToInt(pos.z));
+            lastPos = posInt;
             step += checkIncrement;
         }
 
@@ -167,10 +191,10 @@ public class Player : MonoBehaviour
 
     private float checkDownSpeed(float downSpeed)
     {
-        if(World.instance.CheckForVoxel(new Vector3(transform.position.x - playerWidth, transform.position.y + downSpeed, transform.position.z - playerWidth)) ||
-            World.instance.CheckForVoxel(new Vector3(transform.position.x + playerWidth, transform.position.y + downSpeed, transform.position.z - playerWidth)) ||
-            World.instance.CheckForVoxel(new Vector3(transform.position.x + playerWidth, transform.position.y + downSpeed, transform.position.z + playerWidth)) ||
-            World.instance.CheckForVoxel(new Vector3(transform.position.x - playerWidth, transform.position.y + downSpeed, transform.position.z + playerWidth)))
+        if(World.instance.CheckForVoxel(ConvertFloat3ToVector3int(transform.position.x - playerWidth, transform.position.y + downSpeed, transform.position.z - playerWidth)) ||
+            World.instance.CheckForVoxel(ConvertFloat3ToVector3int(transform.position.x + playerWidth, transform.position.y + downSpeed, transform.position.z - playerWidth)) ||
+            World.instance.CheckForVoxel(ConvertFloat3ToVector3int(transform.position.x + playerWidth, transform.position.y + downSpeed, transform.position.z + playerWidth)) ||
+            World.instance.CheckForVoxel(ConvertFloat3ToVector3int(transform.position.x - playerWidth, transform.position.y + downSpeed, transform.position.z + playerWidth)))
         {
             isGrounded = true;
             return 0;
@@ -184,24 +208,15 @@ public class Player : MonoBehaviour
 
     private float checkUpSpeed(float upSpeed)
     {
-        if (World.instance.CheckForVoxel(new Vector3(transform.position.x - playerWidth, transform.position.y + 2f + upSpeed, transform.position.z - playerWidth)) ||
-            World.instance.CheckForVoxel(new Vector3(transform.position.x + playerWidth, transform.position.y + 2f + upSpeed, transform.position.z - playerWidth)) ||
-            World.instance.CheckForVoxel(new Vector3(transform.position.x + playerWidth, transform.position.y + 2f + upSpeed, transform.position.z + playerWidth)) ||
-            World.instance.CheckForVoxel(new Vector3(transform.position.x - playerWidth, transform.position.y + 2f + upSpeed, transform.position.z + playerWidth)))
+        if (World.instance.CheckForVoxel(ConvertFloat3ToVector3int(transform.position.x - playerWidth, transform.position.y + 2f + upSpeed, transform.position.z - playerWidth)) ||
+            World.instance.CheckForVoxel(ConvertFloat3ToVector3int(transform.position.x + playerWidth, transform.position.y + 2f + upSpeed, transform.position.z - playerWidth)) ||
+            World.instance.CheckForVoxel(ConvertFloat3ToVector3int(transform.position.x + playerWidth, transform.position.y + 2f + upSpeed, transform.position.z + playerWidth)) ||
+            World.instance.CheckForVoxel(ConvertFloat3ToVector3int(transform.position.x - playerWidth, transform.position.y + 2f + upSpeed, transform.position.z + playerWidth)))
             return 0;
         else
             return upSpeed;
     }
 
-    public bool front { get => World.instance.CheckForVoxel(new Vector3(transform.position.x, transform.position.y, transform.position.z + playerWidth)) ||
-                World.instance.CheckForVoxel(new Vector3(transform.position.x, transform.position.y + 1f, transform.position.z + playerWidth)); }
-
-    public bool back { get => World.instance.CheckForVoxel(new Vector3(transform.position.x, transform.position.y, transform.position.z - playerWidth)) ||
-                World.instance.CheckForVoxel(new Vector3(transform.position.x, transform.position.y + 1f, transform.position.z - playerWidth)); }
-
-    public bool left { get => World.instance.CheckForVoxel(new Vector3(transform.position.x - playerWidth, transform.position.y, transform.position.z)) ||
-                World.instance.CheckForVoxel(new Vector3(transform.position.x - playerWidth, transform.position.y + 1f, transform.position.z)); }
-
-    public bool right { get => World.instance.CheckForVoxel(new Vector3(transform.position.x + playerWidth, transform.position.y, transform.position.z)) ||
-                World.instance.CheckForVoxel(new Vector3(transform.position.x + playerWidth, transform.position.y + 1f, transform.position.z)); }
+    private Vector3Int ConvertFloat3ToVector3int(float x, float y, float z) => new Vector3Int(Mathf.FloorToInt(x), Mathf.FloorToInt(y), Mathf.FloorToInt(z));
+    private Vector3Int ConvertVector3ToVector3int(Vector3 vector3) => new Vector3Int(Mathf.FloorToInt(vector3.x), Mathf.FloorToInt(vector3.y), Mathf.FloorToInt(vector3.z));
 }

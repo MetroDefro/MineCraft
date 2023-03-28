@@ -688,7 +688,7 @@ GameObject:
   - component: {fileID: 366521976}
   - component: {fileID: 366521975}
   - component: {fileID: 366521974}
-  - component: {fileID: 366521978}
+  - component: {fileID: 366521979}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -782,7 +782,7 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
---- !u!114 &366521978
+--- !u!114 &366521979
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -791,9 +791,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 366521973}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 24cbe95b5959eef44aa8d2119a7ca259, type: 3}
+  m_Script: {fileID: 11500000, guid: 1fb758e6cd28d054b80a2fbe6637ac98, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  DebugScreen: {fileID: 166241808}
   cursorSlot: {fileID: 1793158333}
   creativeInventory: {fileID: 907805570}
   toolbar: {fileID: 6522662}
@@ -1165,7 +1166,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a3b8bb988340fdb42afa65554222c24c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  camera: {fileID: 963194228}
+  highlightBlock: {fileID: 1389365628}
+  placeBlock: {fileID: 1949204315}
+  toolbar: {fileID: 6522662}
+  checkIncrement: 0.1
+  reach: 8
+  cameraTransform: {fileID: 963194228}
   isGrounded: 0
   isSprinting: 0
   walkSpeed: 3
@@ -1175,11 +1181,6 @@ MonoBehaviour:
   gravity: -9.8
   playerWidth: 0.15
   boundsTolerance: 0.1
-  highlightBlock: {fileID: 1389365628}
-  placeBlock: {fileID: 1949204315}
-  checkIncrement: 0.1
-  reach: 8
-  toolbar: {fileID: 6522662}
 --- !u!1 &907805564
 GameObject:
   m_ObjectHideFlags: 0
@@ -1686,8 +1687,7 @@ MonoBehaviour:
   biome: {fileID: 11400000, guid: 0ce1a7b9063ad694a9dace01c5ec6678, type: 2}
   enableThreading: 0
   material: {fileID: 2100000, guid: 428f69a984cb5cb4bab88613731646d7, type: 2}
-  DebugScreen: {fileID: 166241808}
-  blockTypes:
+  voxelType:
   - {fileID: 11400000, guid: b97a462293e0df14db37f7e9e09959a5, type: 2}
   - {fileID: 11400000, guid: b7969a128e5c1764b93fbc61212fbed5, type: 2}
   - {fileID: 11400000, guid: 19f655447605c994b8b24dea7667dc17, type: 2}
@@ -1695,9 +1695,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: ceaca855d0fac954cb20da5f15b6cae8, type: 2}
   - {fileID: 11400000, guid: de69560b30738a34ea96932c4b0e41b7, type: 2}
   - {fileID: 11400000, guid: 71be303cc0e07814888ac13ab308fd00, type: 2}
-  - {fileID: 11400000, guid: db0d2bcdcc9283848bab7341d8cda436, type: 2}
   - {fileID: 11400000, guid: e68fa3bc5d024bc44b47cbdee0d80265, type: 2}
   - {fileID: 11400000, guid: 2883edfaadf6aae4da95bd8d13a658aa, type: 2}
+  - {fileID: 11400000, guid: db0d2bcdcc9283848bab7341d8cda436, type: 2}
   - {fileID: 11400000, guid: c6a60961f2c857d45a4202ef4f72940d, type: 2}
   - {fileID: 11400000, guid: 800d8957f01275a489f3706c13d593e7, type: 2}
 --- !u!1 &1389365627

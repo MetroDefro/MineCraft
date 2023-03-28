@@ -58,18 +58,21 @@
   <ItemGroup>
     <Compile Include="Assets\Scripts\Noise.cs" />
     <Compile Include="Assets\Scripts\DebugScreen.cs" />
-    <Compile Include="Assets\Scripts\BlockType.cs" />
+    <Compile Include="Assets\Scripts\VoxelType.cs" />
     <Compile Include="Assets\Scripts\BiomeAttributes.cs" />
     <Compile Include="Assets\Scripts\Item\Toolbar.cs" />
     <Compile Include="Assets\Scripts\Item\ItemSlot.cs" />
-    <Compile Include="Assets\Scripts\VoxelData.cs" />
-    <Compile Include="Assets\Scripts\Item\InventoryPresenter.cs" />
-    <Compile Include="Assets\Scripts\Chunk.cs" />
+    <Compile Include="Assets\Scripts\Voxel\VoxelData.cs" />
+    <Compile Include="Assets\Scripts\Chunk\Chunk.cs" />
     <Compile Include="Assets\Scripts\Item\CreativeInventory.cs" />
     <Compile Include="Assets\Scripts\Structure.cs" />
     <Compile Include="Assets\Scripts\World.cs" />
     <Compile Include="Assets\Scripts\Item\ItemStack.cs" />
     <Compile Include="Assets\Scripts\Player.cs" />
+    <Compile Include="Assets\Scripts\WorldUIPresenter.cs" />
+    <Compile Include="Assets\Scripts\Voxel\VoxelMode.cs" />
+    <Compile Include="Assets\Scripts\Chunk\ChunkCoord.cs" />
+    <Compile Include="Assets\Scripts\Voxel\VoxelState.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />

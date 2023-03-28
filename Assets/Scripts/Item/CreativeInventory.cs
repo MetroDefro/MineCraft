@@ -10,9 +10,9 @@ public class CreativeInventory : MonoBehaviour
 
     public void Initialize()
     {
-        for (int i = 1; i < World.instance.BlockTypes.Length; i++)
+        for (int i = 1; i < World.instance.VoxelType.Length; i++)
         {
-            ItemSlot slot = Instantiate(slotPrefab, transform).InsertStack(new ItemStack((byte)i, 64));
+            ItemSlot slot = Instantiate(slotPrefab, transform).InsertStack(new ItemStack((BLOCK_TYPE_ID)i, 64));
             slot.isCreative = true;
             Slots.Add(slot);
         }

@@ -4,10 +4,10 @@ using UnityEngine;
 
 public class ItemStack
 {
-    public byte id;
+    public BLOCK_TYPE_ID id;
     public int amount;
 
-    public ItemStack(byte id, int amount)
+    public ItemStack(BLOCK_TYPE_ID id, int amount)
     {
         this.id = id;
         this.amount = amount;

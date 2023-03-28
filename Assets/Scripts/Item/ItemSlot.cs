@@ -19,7 +19,7 @@ public class ItemSlot : MonoBehaviour
     {
         if (HasItem)
         {
-            slotIcon.sprite = World.instance.BlockTypes[stack.id].icon;
+            slotIcon.sprite = World.instance.VoxelType[(int)stack.id].icon;
             slotAmount.text = stack.amount.ToString();
             slotIcon.enabled = true;
             slotAmount.enabled = true;

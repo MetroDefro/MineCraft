@@ -34,7 +34,7 @@ public class Toolbar : MonoBehaviour
         byte index = 1;
         foreach (ItemSlot s in Slots)
         {
-            ItemStack stack = new ItemStack(index, Random.Range(2, 65));
+            ItemStack stack = new ItemStack((BLOCK_TYPE_ID)index, Random.Range(2, 65));
             s.InsertStack(stack);
             index++;
         }
