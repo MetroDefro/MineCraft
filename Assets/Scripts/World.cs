@@ -15,25 +15,13 @@ public class World : MonoBehaviour
 
     public Transform PlayerTransform;
     public ChunkCoord PlayerChunkCoord;
-    public GameObject creativeInventoryWindow;
-    public GameObject cursorSlot;
     public object ChunkUpdateThreadLock = new object();
 
     public VoxelType[] VoxelType => voxelType;
     public Queue<Chunk> chunksToDraw = new Queue<Chunk>();
     public List<Chunk> chunksToUpdate = new List<Chunk>();
 
-    public bool InUI
-    {
-        get => inUI;
-        set
-        {
-            inUI = value;
-            creativeInventoryWindow.SetActive(inUI);
-            cursorSlot.SetActive(inUI);
-            Cursor.lockState = inUI ? CursorLockMode.None : CursorLockMode.Locked;
-        }
-    }
+    public bool InUI { get => inUI; set => Cursor.lockState = (inUI = value) ? CursorLockMode.None : CursorLockMode.Locked; }
 
     [Header("World Generation Values")]
     [SerializeField] private int Seed;
@@ -50,8 +38,8 @@ public class World : MonoBehaviour
     private Thread chunkUpdateThread;
 
     private Chunk[,] chunks = new Chunk[VoxelData.WorldSizeInChunks, VoxelData.WorldSizeInChunks];
-    private List<ChunkCoord> currentActiveChunks = new List<ChunkCoord>();
-    private List<ChunkCoord> chunksToCreate = new List<ChunkCoord>();
+    private List<Chunk> currentActiveChunks = new List<Chunk>();
+    private List<Chunk> chunksToCreate = new List<Chunk>();
     private Queue<Queue<VoxelMode>> modifications = new Queue<Queue<VoxelMode>>();
 
     private bool applyingModifications = false;
@@ -132,7 +120,7 @@ public class World : MonoBehaviour
     {
         ChunkCoord thisChunkCoord = new ChunkCoord(pos);
 
-        if (!IsChunkInWorld(thisChunkCoord) || pos.y < 0 || pos.y > VoxelData.ChunkHeight)
+        if (!VoxelData.IsChunkInWorld(thisChunkCoord) || pos.y < 0 || pos.y > VoxelData.ChunkHeight)
             return false;
 
         if (chunks[thisChunkCoord.x, thisChunkCoord.z] != null && chunks[thisChunkCoord.x, thisChunkCoord.z].IsEditable)
@@ -146,7 +134,7 @@ public class World : MonoBehaviour
         ChunkCoord thisChunkCoord = new ChunkCoord(pos);
 
         // When a player creating a block in-game
-        if (!IsChunkInWorld(thisChunkCoord) || pos.y < 0 || pos.y > VoxelData.ChunkHeight)
+        if (!VoxelData.IsChunkInWorld(thisChunkCoord) || pos.y < 0 || pos.y > VoxelData.ChunkHeight)
             return null;
 
         if (chunks[thisChunkCoord.x, thisChunkCoord.z] != null && chunks[thisChunkCoord.x, thisChunkCoord.z].IsEditable)
@@ -162,7 +150,7 @@ public class World : MonoBehaviour
 
         // IMMUTABLE PASS
         // If outside world, return air
-        if (!IsVoxelInWorld(pos))
+        if (!VoxelData.IsVoxelInWorld(pos))
             voxelValue = (byte)BLOCK_TYPE_ID.Air;
 
         // if bottom block of chunk, return bedrock.
@@ -222,9 +210,7 @@ public class World : MonoBehaviour
         {
             for (int z = chunkStartPosition; z < chunkEndPosition; z++)
             {
-                ChunkCoord coord = new ChunkCoord(x, z);
-                chunks[x, z] = new Chunk(coord);
-                chunksToCreate.Add(coord);
+                chunksToCreate.Add(chunks[x, z] = new Chunk(new ChunkCoord(x, z)));
             }
         }
 
@@ -233,9 +219,9 @@ public class World : MonoBehaviour
 
     private void CreateChunk()
     {
-        ChunkCoord c = chunksToCreate[0];
+        Chunk chunk = chunksToCreate[0];
         chunksToCreate.RemoveAt(0);
-        chunks[c.x, c.z].Init(material);
+        chunk.Init(material);
     }
 
     private void UpdateChunks()
@@ -251,7 +237,7 @@ public class World : MonoBehaviour
                 if (chunksToUpdate[index].IsEditable)
                 {
                     chunksToUpdate[index].UpdateChunk();
-                    currentActiveChunks.Add(chunksToUpdate[index].Coord);
+                    currentActiveChunks.Add(chunksToUpdate[index]);
                     chunksToUpdate.RemoveAt(index);
                     updated = true;
                 }
@@ -289,8 +275,7 @@ public class World : MonoBehaviour
 
                 if (chunks[c.x, c.z] == null)
                 {
-                    chunks[c.x, c.z] = new Chunk(c);
-                    chunksToCreate.Add(c);
+                    chunksToCreate.Add(chunks[c.x, c.z] = new Chunk(c));
                 }
 
                 chunks[c.x, c.z].modifications.Enqueue(v);
@@ -305,7 +290,7 @@ public class World : MonoBehaviour
         ChunkCoord playerCoord = new ChunkCoord(PlayerTransform.position);
         playerLastChunkCoord = PlayerChunkCoord;
 
-        List<ChunkCoord> previouslyActiveChunks = new List<ChunkCoord>(currentActiveChunks);
+        List<Chunk> previouslyActiveChunks = new List<Chunk>(currentActiveChunks);
 
         currentActiveChunks.Clear();
 
@@ -314,33 +299,30 @@ public class World : MonoBehaviour
             for (int z = playerCoord.z - VoxelData.ViewDistanceInChunks; z < playerCoord.z + VoxelData.ViewDistanceInChunks; z++)
             {
                 ChunkCoord coord = new ChunkCoord(x, z);
-                if (IsChunkInWorld(coord))
+                if (VoxelData.IsChunkInWorld(coord))
                 {
                     if (chunks[x, z] == null)
                     {
                         chunks[x, z] = new Chunk(coord);
-                        chunksToCreate.Add(coord);
+                        chunksToCreate.Add(chunks[x, z]);
                     }   
                     else if (!chunks[x, z].IsActive)
                     {
                         chunks[x, z].IsActive = true;
                     }
-                    currentActiveChunks.Add(coord);
+                    currentActiveChunks.Add(chunks[x, z]);
                 }
 
                 for (int i = 0; i < previouslyActiveChunks.Count; i++)
                 {
-                    if (previouslyActiveChunks[i].Equals(coord))
+                    if (previouslyActiveChunks[i].Coord.Equals(coord))
                         previouslyActiveChunks.RemoveAt(i);
                 }
             }
         }
 
-        foreach (ChunkCoord c in previouslyActiveChunks)
-            chunks[c.x, c.z].IsActive = false;
+        foreach (Chunk c in previouslyActiveChunks)
+            c.IsActive = false;
     }
-
-    private bool IsChunkInWorld(ChunkCoord coord) => coord.x >= 0 && coord.x < VoxelData.WorldSizeInChunks && coord.z >= 0 && coord.z < VoxelData.WorldSizeInChunks;
-    private bool IsVoxelInWorld(Vector3 pos) => pos.x >= 0 && pos.x < VoxelData.WorldSizeInVoxels && pos.y >= 0 && pos.y < VoxelData.ChunkHeight && pos.z >= 0 && pos.z < VoxelData.WorldSizeInVoxels;
     #endregion
 }

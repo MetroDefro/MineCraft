@@ -63,4 +63,9 @@ public class VoxelData : MonoBehaviour
         new Vector2(1.0f, 0.0f),
         new Vector2(1.0f, 1.0f),
     };
+
+    public static bool IsChunkInWorld(ChunkCoord coord) => coord.x >= 0 && coord.x < WorldSizeInChunks && coord.z >= 0 && coord.z < WorldSizeInChunks;
+    public static bool IsVoxelInWorld(Vector3 pos) => pos.x >= 0 && pos.x < WorldSizeInVoxels && pos.y >= 0 && pos.y < ChunkHeight && pos.z >= 0 && pos.z < WorldSizeInVoxels;
+    public static bool IsVoxelInChunk(int x, int y, int z) => x >= 0 && x < ChunkWidth && y >= 0 && y < ChunkHeight && z >= 0 && z < ChunkWidth;
+
 }

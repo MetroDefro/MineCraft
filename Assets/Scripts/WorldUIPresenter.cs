@@ -36,13 +36,20 @@ public class WorldUIPresenter : MonoBehaviour
 
     private void Update()
     {
+        if (Input.GetKeyDown(KeyCode.F3))
+            DebugScreen.SetActive(!DebugScreen.activeSelf);
+
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            World.instance.InUI = !World.instance.InUI;
+            creativeInventory.gameObject.SetActive(World.instance.InUI);
+            cursorSlot.gameObject.SetActive(World.instance.InUI);
+        }
+
         if (!World.instance.InUI)
             return;
 
         cursorSlot.transform.position = Input.mousePosition;
-
-        if (Input.GetKeyDown(KeyCode.F3))
-            DebugScreen.SetActive(!DebugScreen.activeSelf);
     }
 
     private void HandleSlotClick(ItemSlot clickedSlot)

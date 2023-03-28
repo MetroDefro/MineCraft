@@ -159,7 +159,7 @@ public class Chunk
             {
                 Vector3Int neighbor = v + VoxelData.FaceChecks[p];
 
-                if (IsVoxelInChunk(neighbor.x, neighbor.y, neighbor.z))
+                if (VoxelData.IsVoxelInChunk(neighbor.x, neighbor.y, neighbor.z))
                 {
                     if (voxelMapBlockTypes[neighbor.x, neighbor.y, neighbor.z].globalLightPercent < voxelMapBlockTypes[v.x, v.y, v.z].globalLightPercent - VoxelData.lightFalloff)
                     {
@@ -235,8 +235,6 @@ public class Chunk
         meshFilter.mesh = mesh;
     }
 
-    private bool IsVoxelInChunk(int x, int y, int z) => x >= 0 && x < VoxelData.ChunkWidth && y >= 0 && y < VoxelData.ChunkHeight && z >= 0 && z < VoxelData.ChunkWidth;
-
     private void UpdateSurroundingVoxels(int x, int y, int z)
     {
         Vector3Int thisVoxel = new Vector3Int(x, y, z);
@@ -246,7 +244,7 @@ public class Chunk
             Vector3Int currentVoxel = thisVoxel + VoxelData.FaceChecks[p];
 
             // When the added voxel affects other chunks, that chunk also needs to be updated.
-            if (!IsVoxelInChunk(currentVoxel.x, currentVoxel.y, currentVoxel.z))
+            if (!VoxelData.IsVoxelInChunk(currentVoxel.x, currentVoxel.y, currentVoxel.z))
             {
                 World.instance.chunksToUpdate.Insert(0, World.instance.GetChunkFromVector3(currentVoxel + Position));
             }
@@ -255,7 +253,7 @@ public class Chunk
 
     private VoxelState CheckVoxel(Vector3Int pos)
     {
-        if (!IsVoxelInChunk(pos.x, pos.y, pos.z))
+        if (!VoxelData.IsVoxelInChunk(pos.x, pos.y, pos.z))
             return World.instance.GetVoxelState(pos + Position);
 
         return voxelMapBlockTypes[pos.x, pos.y, pos.z];

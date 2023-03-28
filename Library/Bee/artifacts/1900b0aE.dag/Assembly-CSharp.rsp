@@ -364,7 +364,7 @@
 "Assets/Scripts/Voxel/VoxelData.cs"
 "Assets/Scripts/Voxel/VoxelMode.cs"
 "Assets/Scripts/Voxel/VoxelState.cs"
-"Assets/Scripts/VoxelType.cs"
+"Assets/Scripts/Voxel/VoxelType.cs"
 "Assets/Scripts/World.cs"
 "Assets/Scripts/WorldUIPresenter.cs"
 -langversion:9.0

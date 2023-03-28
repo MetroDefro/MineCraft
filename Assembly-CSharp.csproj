@@ -57,22 +57,22 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\Noise.cs" />
+    <Compile Include="Assets\Scripts\Chunk\ChunkCoord.cs" />
     <Compile Include="Assets\Scripts\DebugScreen.cs" />
-    <Compile Include="Assets\Scripts\VoxelType.cs" />
+    <Compile Include="Assets\Scripts\Voxel\VoxelMode.cs" />
+    <Compile Include="Assets\Scripts\Voxel\VoxelType.cs" />
     <Compile Include="Assets\Scripts\BiomeAttributes.cs" />
+    <Compile Include="Assets\Scripts\Voxel\VoxelState.cs" />
     <Compile Include="Assets\Scripts\Item\Toolbar.cs" />
     <Compile Include="Assets\Scripts\Item\ItemSlot.cs" />
     <Compile Include="Assets\Scripts\Voxel\VoxelData.cs" />
+    <Compile Include="Assets\Scripts\WorldUIPresenter.cs" />
     <Compile Include="Assets\Scripts\Chunk\Chunk.cs" />
     <Compile Include="Assets\Scripts\Item\CreativeInventory.cs" />
     <Compile Include="Assets\Scripts\Structure.cs" />
     <Compile Include="Assets\Scripts\World.cs" />
     <Compile Include="Assets\Scripts\Item\ItemStack.cs" />
     <Compile Include="Assets\Scripts\Player.cs" />
-    <Compile Include="Assets\Scripts\WorldUIPresenter.cs" />
-    <Compile Include="Assets\Scripts\Voxel\VoxelMode.cs" />
-    <Compile Include="Assets\Scripts\Chunk\ChunkCoord.cs" />
-    <Compile Include="Assets\Scripts\Voxel\VoxelState.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />
@@ -85,7 +85,7 @@
     <None Include="Assets\TextMesh Pro\Sprites\EmojiOne Attribution.txt" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_Bitmap-Custom-Atlas.shader" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF.shader" />
-    <None Include="Assets\Scripts\StandardBlockShader.shader" />
+    <None Include="Assets\Scripts\Shader\StandardBlockShader.shader" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile SSD.shader" />
     <None Include="Assets\TextMesh Pro\Resources\LineBreaking Leading Characters.txt" />
     <None Include="Assets\TextMesh Pro\Shaders\TMPro_Properties.cginc" />

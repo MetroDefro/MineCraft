@@ -81,11 +81,6 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            World.instance.InUI = !World.instance.InUI;
-        }
-
         if (!World.instance.InUI)
         {
             GetPlayerInputs();
